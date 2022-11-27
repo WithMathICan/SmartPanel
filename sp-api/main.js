@@ -1,7 +1,7 @@
 'use strict';
 
 const http = require('http');
-const { init } = require('./app/init');
+const { test } = require('./api/test');
 const { DB_SCHEMAS, SERVER_PORT } = require('./config');
 const { pool } = require('./pg_pool');
 
@@ -19,6 +19,7 @@ const HEADERS = {
    let db_tables = await FindDbTables(DB_SCHEMAS)
    console.log(db_tables);
    server(db_tables, SERVER_PORT)
+   test()
 })();
 
 async function FindDbTables(schemas) {
