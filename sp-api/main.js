@@ -2,7 +2,8 @@
 
 const http = require('http');
 const { test } = require('./api/test');
-const { DB_SCHEMAS, SERVER_PORT } = require('./config');
+const { TableModel } = require('./classes/table-model');
+const { DB_SCHEMAS, SERVER_PORT, DB_SETTINGS } = require('./config');
 const { pool } = require('./pg_pool');
 
 const HEADERS = {
@@ -19,7 +20,7 @@ const HEADERS = {
    let db_tables = await FindDbTables(DB_SCHEMAS)
    console.log(db_tables);
    server(db_tables, SERVER_PORT)
-   test()
+   // test()
 })();
 
 async function FindDbTables(schemas) {
@@ -37,10 +38,31 @@ function server(db_tables, port) {
       res.setHeader('Content-Type', 'application/json; charset=UTF-8')
       res.setHeader('Access-Control-Allow-Origin', '*',)
       let { url, socket, method } = req
-      console.log(url, method);
+      console.log(socket.remoteAddress, method, url);
 
       if (url === '/api/init' && method === 'GET') {
          return res.end(JSON.stringify(db_tables))
+      }
+
+      let params = url.substring(1).split('/')
+      if (params.length >= 4 && params[0] === 'api'){
+         console.log(params);
+         let schema = params[1]
+         let table = params[2]
+         let action = params[3]
+         let id = params[4]
+         console.log({schema, table, action, id});
+
+         if (action === 'cols'){
+            let model = new TableModel(DB_SETTINGS.database, schema, table, pool)
+            await model.CreateCols()
+            return res.end(JSON.stringify(model.cols))
+         }
+
+         if (action === 'beans'){
+            let {rows} = await pool.query(`SELECT * FROM ${schema}.${table} ORDER BY id DESC`)
+            return res.end(JSON.stringify(rows))
+         }
       }
 
       res.statusCode = 404

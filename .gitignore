@@ -1,4 +1,5 @@
-node_modules
+/vue/node_modules
+/sp-api/node_modules
 config.js
 package-lock.json
 /vue/out
