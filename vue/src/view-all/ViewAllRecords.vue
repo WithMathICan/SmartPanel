@@ -9,6 +9,7 @@
             <ColId v-if="col.column_name === 'id'" :bean="slotProps.data" :schema="schema" :table="table" />
             <ColString v-if="col.data_type === 'varchar'" :data="slotProps.data[col.column_name].substring(0, 150)"/>
             <ColFk v-if="col.data_type === 'fk'" :col="col" :bean="slotProps.data" />
+            <ColDate v-if="col.data_type === 'date'" :data="slotProps.data[col.column_name]" />
          </template>
       </Column>
    </span>
@@ -24,6 +25,7 @@ import Column from 'primevue/column';
 import ColId from './cols/ColId.vue'
 import ColString from './cols/ColString.vue'
 import ColFk from './cols/ColFk.vue'
+import ColDate from './cols/ColDate.vue'
 
 const props = defineProps({schema: String, table: String})
 
