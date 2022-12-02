@@ -1,7 +1,7 @@
 <template>
-   <router-link :to="`/${schema}/${table}/${bean.id}`">{{bean.id}}</router-link>
+   <router-link :to="`/${col.schema_name}/${col.table_name}/${bean.id}`">{{bean.id}}</router-link>
 </template>
 
 <script setup>
-let props = defineProps(['schema', 'table', 'bean'])
+let props = defineProps(['bean', 'col'])
 </script>

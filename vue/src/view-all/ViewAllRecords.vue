@@ -6,10 +6,11 @@
    <span v-for="col of spColsData[tableKey]">
       <Column :field="col.column_name" :header="col.column_name" >
          <template #body="slotProps">
-            <ColId v-if="col.column_name === 'id'" :bean="slotProps.data" :schema="schema" :table="table" />
-            <ColString v-if="col.data_type === 'varchar'" :data="slotProps.data[col.column_name].substring(0, 150)"/>
-            <ColFk v-if="col.data_type === 'fk'" :col="col" :bean="slotProps.data" />
-            <ColDate v-if="col.data_type === 'date'" :data="slotProps.data[col.column_name]" />
+            <ColId v-if="col.data_type === 'id'" :bean="slotProps.data" :col="col" />
+            <ColFk v-else-if="col.data_type === 'fk'" :col="col" :bean="slotProps.data" />
+            <ColDate v-else-if="col.data_type === 'date'" :bean="slotProps.data" :col="col" />
+            <ColNumber v-else-if="col.data_type === 'number'" :bean="slotProps.data" :col="col" />
+            <ColString v-else-if="col.data_type === 'varchar'" :data="slotProps.data[col.column_name].substring(0, 150)"/>
          </template>
       </Column>
    </span>
@@ -26,6 +27,7 @@ import ColId from './cols/ColId.vue'
 import ColString from './cols/ColString.vue'
 import ColFk from './cols/ColFk.vue'
 import ColDate from './cols/ColDate.vue'
+import ColNumber from './cols/ColNumber.vue'
 
 const props = defineProps({schema: String, table: String})
 
