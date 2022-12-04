@@ -18,11 +18,6 @@ export async function FillBeans(schema, table, refresh = false){
    if (spBeans[key] && !refresh) return;
    if (spBeans[key] === 'loading') return
    spBeans[key] = 'loading'
-   let beans = await api[schema][table].GetBeans()
-   // for (let b of beans) for (let key in b) if (typeof b[key] === 'string' && b[key].endsWith('Z')){
-   //    let new_date = Date.parse(b[key])
-   //    if (new_date) b[key] = new Date(new_date)
-   // }
-   spBeans[key] = beans
+   spBeans[key] = await api[schema][table].GetBeans()
 }
 

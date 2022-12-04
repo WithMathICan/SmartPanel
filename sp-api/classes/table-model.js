@@ -2,6 +2,7 @@ const pg = require('pg');
 const { Col } = require('common/col');
 const {Fk} = require('common/fk')
 const { pool } = require('../pg_pool');
+const { DB_SETTINGS } = require('../config');
 /** @typedef {import("common/col").IFk} IFk */
 
 const MY_SQL_COLS = `SELECT * from information_schema.columns 
@@ -43,30 +44,31 @@ const MY_SQL_FK = `SELECT
    WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_schema=$1 AND tc.table_name=$2`
 
 class TableModel{
-   table_catalog
    schema
    table
-   table_name
+   full_table_name
    pg_client
    /** @type Col[] */ cols
 
    /**
     * 
-    * @param {string} table_catalog 
     * @param {string} schema 
     * @param {string} table 
     * @param {pg.PoolClient} pg_client 
     */
-   constructor(table_catalog, schema, table, pg_client){
-      this.table_catalog = table_catalog
+   constructor(schema, table, pg_client){
       this.schema = schema
       this.table = table
-      this.table_name = schema + '.' + table
+      this.full_table_name = schema + '.' + table
       this.pg_client = pg_client
    }
 
+   async GetBean(id){
+      let {rows} = await this.pg_client.query(`select * from ${this.full_table_name} where id=$1`)
+   }
+
    async CreateCols(){
-      let {rows} = await this.pg_client.query(MY_SQL_COLS, [this.table_catalog, this.schema, this.table])
+      let {rows} = await this.pg_client.query(MY_SQL_COLS, [DB_SETTINGS.database, this.schema, this.table])
       this.cols = rows.map(el => new Col(el))
       /** @type {{rows: IFk[]}} */
       let fk_arr = await pool.query(MY_SQL_FK, [this.schema, this.table])

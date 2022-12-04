@@ -3,6 +3,20 @@ module.exports = (table, pg_client) => ({
       return pg_client.query(sql, arr)
    },
 
+   async queryFirst(sql, arr){
+      let {rows} = await pg_client.query(sql, arr)
+      return rows[0]
+   },
+
+   async queryAll(sql, arr){
+      let {rows} = await pg_client.query(sql, arr)
+      return rows
+   },
+
+   findById(id, fields = ['*']){
+      return this.queryFirst(`select ${fields.join(',')} from ${table} where id=$1`, [id])
+   },
+
    async read(id, fields = ['*']){
       let sql = `SELECT ${fields.join(',')} from ${table}`
       if (!id){

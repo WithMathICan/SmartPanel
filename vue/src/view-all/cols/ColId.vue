@@ -1,5 +1,5 @@
 <template>
-   <router-link :to="`/${col.schema_name}/${col.table_name}/${bean.id}`">{{bean.id}}</router-link>
+   <router-link :to="`/${col.table_schema}/${col.table_name}/edit/${bean.id}`">{{bean.id}}</router-link>
 </template>
 
 <script setup>
