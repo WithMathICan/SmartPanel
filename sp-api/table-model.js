@@ -1,3 +1,5 @@
+'use strict';
+
 const pg = require('pg');
 const { Col } = require('common/col');
 const {Fk} = require('common/fk')

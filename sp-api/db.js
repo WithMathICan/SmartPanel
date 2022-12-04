@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = (table, pg_client) => ({
    query(sql, arr){
       return pg_client.query(sql, arr)

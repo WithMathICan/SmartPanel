@@ -6,7 +6,8 @@
 </template>
 
 <script>
-import { defineComponent, onMounted, watch } from 'vue';
+import { defineComponent, onMounted, ref, watch } from 'vue';
+import { api } from '../api';
 import { FillColsData } from '../store';
 
 export default defineComponent({
@@ -14,8 +15,13 @@ export default defineComponent({
 
    /** @param {{schema: string, table: string, id: string}} props */
    setup({schema, table, id}){
+      let bean = ref(null)
       function init(){
          FillColsData(schema, table)
+         api[schema][table].GetBean(id).then(data => {
+            bean.value = data
+            console.log(data);
+         })
       }
 
       onMounted(init)
