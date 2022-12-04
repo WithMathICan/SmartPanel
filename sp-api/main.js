@@ -1,8 +1,10 @@
 'use strict';
 
-const http = require('http');
-const { init } = require('./app/init');
-const { DB_SCHEMAS, SERVER_PORT } = require('./config');
+const http = require('node:http');
+const path = require('node:path');
+const fs = require('node:fs')
+const { TableModel } = require('./classes/table-model');
+const { DB_SCHEMAS, SERVER_PORT, DB_SETTINGS, API_FOLDER } = require('./config');
 const { pool } = require('./pg_pool');
 
 const HEADERS = {
@@ -17,9 +19,23 @@ const HEADERS = {
 
 (async () => {
    let db_tables = await FindDbTables(DB_SCHEMAS)
+   let actions = FindAllActions(API_FOLDER)
    console.log(db_tables);
-   server(db_tables, SERVER_PORT)
+   server(db_tables, actions, SERVER_PORT, API_FOLDER)
 })();
+
+function FindAllActions(folder){
+   let files = fs.readdirSync(folder)
+   let actions = {}
+   for (let file of files) if (file.endsWith('.js')){
+      let actionName = path.basename(file, '.js')
+      let func = require(path.join(API_FOLDER, file))
+      console.log({actionName}, typeof func);
+      if (typeof func === 'function') actions[actionName] = func
+   }
+   console.log({actions});
+   return actions
+}
 
 async function FindDbTables(schemas) {
    const db_tables = {};
@@ -31,18 +47,51 @@ async function FindDbTables(schemas) {
    return db_tables
 }
 
-function server(db_tables, port) {
+function server(db_tables, actions, port) {
    http.createServer(async (req, res) => {
       res.setHeader('Content-Type', 'application/json; charset=UTF-8')
       res.setHeader('Access-Control-Allow-Origin', '*',)
+      res.statusCode = 404
       let { url, socket, method } = req
-      console.log(url, method);
+      console.log(socket.remoteAddress, method, url);
 
       if (url === '/api/init' && method === 'GET') {
+         res.statusCode = 200
          return res.end(JSON.stringify(db_tables))
       }
 
-      res.statusCode = 404
+      let params = url.substring(1).split('/')
+      if (params.length >= 4 && params[0] === 'api'){
+         console.log(params);
+         let schema = params[1]
+         let table = params[2]
+         let action = params[3]
+         let id = params[4]
+         console.log({schema, table, action, id});
+         let schemaTables = db_tables[schema]
+         if (!schemaTables || !schemaTables.includes(table)) return res.end("Not Found")
+         let handler = actions[action]
+         console.log(typeof handler);
+         if (!handler) return res.end("Not Found")
+
+         let {statusCode, result, message} = await handler(schema, table, id)
+         res.statusCode = statusCode
+         return res.end(JSON.stringify({message, result}))
+
+         if (action === 'cols'){
+            let model = new TableModel(DB_SETTINGS.database, schema, table, pool)
+            await model.CreateCols()
+            return res.end(JSON.stringify(model.cols))
+         }
+
+         if (action === 'beans'){
+            let {rows} = await pool.query(`SELECT * FROM ${schema}.${table} ORDER BY id DESC`)
+            return res.end(JSON.stringify(rows))
+         }
+      }
+
+      
       res.end("Not Found")
    }).listen(port, () => console.log("Api server started on port ", port))
 }
+

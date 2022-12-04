@@ -1,6 +1,8 @@
 <template>
    <Menubar :model="menu_items"></Menubar>
-   <router-view></router-view>
+   <div class="container p-2">
+      <router-view></router-view>
+   </div>
 </template>
 
 <script setup>
