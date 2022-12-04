@@ -3,7 +3,6 @@
 const http = require('node:http');
 const path = require('node:path');
 const fs = require('node:fs')
-const { TableModel } = require('./classes/table-model');
 const { DB_SCHEMAS, SERVER_PORT, DB_SETTINGS, API_FOLDER } = require('./config');
 const { pool } = require('./pg_pool');
 
@@ -73,24 +72,11 @@ function server(db_tables, actions, port) {
          let handler = actions[action]
          console.log(typeof handler);
          if (!handler) return res.end("Not Found")
-
          let {statusCode, result, message} = await handler(schema, table, id)
          res.statusCode = statusCode
          return res.end(JSON.stringify({message, result}))
-
-         if (action === 'cols'){
-            let model = new TableModel(DB_SETTINGS.database, schema, table, pool)
-            await model.CreateCols()
-            return res.end(JSON.stringify(model.cols))
-         }
-
-         if (action === 'beans'){
-            let {rows} = await pool.query(`SELECT * FROM ${schema}.${table} ORDER BY id DESC`)
-            return res.end(JSON.stringify(rows))
-         }
       }
 
-      
       res.end("Not Found")
    }).listen(port, () => console.log("Api server started on port ", port))
 }

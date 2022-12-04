@@ -1,4 +1,4 @@
-const { TableModel } = require("../classes/table-model")
+const { TableModel } = require("../table-model")
 const { pool } = require("../pg_pool")
 
 async function GetCols(schema, table){

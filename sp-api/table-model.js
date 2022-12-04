@@ -1,8 +1,8 @@
 const pg = require('pg');
 const { Col } = require('common/col');
 const {Fk} = require('common/fk')
-const { pool } = require('../pg_pool');
-const { DB_SETTINGS } = require('../config');
+const { pool } = require('./pg_pool');
+const { DB_SETTINGS } = require('./config');
 /** @typedef {import("common/col").IFk} IFk */
 
 const MY_SQL_COLS = `SELECT * from information_schema.columns 
@@ -61,10 +61,6 @@ class TableModel{
       this.table = table
       this.full_table_name = schema + '.' + table
       this.pg_client = pg_client
-   }
-
-   async GetBean(id){
-      let {rows} = await this.pg_client.query(`select * from ${this.full_table_name} where id=$1`)
    }
 
    async CreateCols(){
