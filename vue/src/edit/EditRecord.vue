@@ -20,7 +20,6 @@ export default defineComponent({
          FillColsData(schema, table)
          api[schema][table].GetBean(id).then(data => {
             bean.value = data
-            console.log(data);
          })
       }
 
