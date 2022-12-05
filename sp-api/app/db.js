@@ -5,12 +5,12 @@ module.exports = (table, pg_client) => ({
       return pg_client.query(sql, arr)
    },
 
-   async queryFirst(sql, arr){
+   async queryFirst(sql, arr = []){
       let {rows} = await pg_client.query(sql, arr)
       return rows[0]
    },
 
-   async queryAll(sql, arr){
+   async queryAll(sql, arr = []){
       let {rows} = await pg_client.query(sql, arr)
       return rows
    },

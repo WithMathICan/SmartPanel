@@ -4,7 +4,7 @@ const http = require('node:http');
 const path = require('node:path');
 const fs = require('node:fs')
 const { DB_SCHEMAS, SERVER_PORT, DB_SETTINGS, API_FOLDER } = require('./config');
-const { pool } = require('./pg_pool');
+const { pool } = require('./app/pg_pool');
 
 const HEADERS = {
    'X-XSS-Protection': '1; mode=block',
@@ -18,22 +18,47 @@ const HEADERS = {
 
 (async () => {
    let db_tables = await FindDbTables(DB_SCHEMAS)
-   let actions = FindAllActions(API_FOLDER)
+   let actions = await FindAllActions(API_FOLDER)
    console.log(db_tables);
    server(db_tables, actions, SERVER_PORT, API_FOLDER)
 })();
 
-function FindAllActions(folder){
-   let files = fs.readdirSync(folder)
-   let actions = {}
-   for (let file of files) if (file.endsWith('.js')){
-      let actionName = path.basename(file, '.js')
-      let func = require(path.join(API_FOLDER, file))
-      console.log({actionName}, typeof func);
-      if (typeof func === 'function') actions[actionName] = func
+async function FindAllActions(folder) {
+   try {
+      let actions = {}
+      for (let dir_name of await fs.promises.readdir(folder)) {
+         let stat = await fs.promises.stat(path.resolve(folder, dir_name))
+         if (!stat.isDirectory()) continue
+         let dir_files = await fs.promises.readdir(path.resolve(folder, dir_name))
+         // console.log({dir_files});
+         if (dir_files.length === 0) continue
+         actions[dir_name] = {}
+         for (let file of await fs.promises.readdir(path.resolve(folder, dir_name))) {
+            if (file.endsWith('.js')) {
+               let obj = require(path.resolve(folder, dir_name, file))
+               if (typeof obj !== 'object') continue
+               let actionName = path.basename(file, '.js')
+               actions[dir_name][actionName] = {}
+
+               for (let key in obj) {
+                  if (typeof obj[key] === 'function') actions[dir_name][actionName][key] = obj[key]
+               }
+            }
+         }
+      }
+
+      // for (let file of files) if (file.endsWith('.js')){
+      //    let actionName = path.basename(file, '.js')
+      //    let func = require(path.join(API_FOLDER, file))
+      //    console.log({actionName}, typeof func);
+      //    if (typeof func === 'function') actions[actionName] = func
+      // }
+      console.dir({ actions }, {depth: 200});
+      return actions
    }
-   console.log({actions});
-   return actions
+   catch (e) {
+      console.log(e);
+   }
 }
 
 async function FindDbTables(schemas) {
@@ -60,21 +85,21 @@ function server(db_tables, actions, port) {
       }
 
       let params = url.substring(1).split('/')
-      if (params.length >= 4 && params[0] === 'api'){
+      if (params.length >= 4 && params[0] === 'api') {
          console.log(params);
          let schema = params[1]
          let table = params[2]
          let action = params[3]
          let id = params[4]
-         console.log({schema, table, action, id});
+         console.log({ schema, table, action, id });
          let schemaTables = db_tables[schema]
          if (!schemaTables || !schemaTables.includes(table)) return res.end("Not Found")
          let handler = actions[action]
          console.log(typeof handler);
          if (!handler) return res.end("Not Found")
-         let {statusCode, result, message} = await handler(schema, table, id)
+         let { statusCode, result, message } = await handler(schema, table, id)
          res.statusCode = statusCode
-         return res.end(JSON.stringify({message, result}))
+         return res.end(JSON.stringify({ message, result }))
       }
 
       res.end("Not Found")

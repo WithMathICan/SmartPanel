@@ -3,8 +3,8 @@
 const pg = require('pg');
 const { Col } = require('common/col');
 const {Fk} = require('common/fk')
-const { pool } = require('./pg_pool');
-const { DB_SETTINGS } = require('./config');
+const { pool, queryAll, queryFirst } = require('./pg_pool');
+const { DB_SETTINGS } = require('../config');
 /** @typedef {import("common/col").IFk} IFk */
 
 const MY_SQL_COLS = `SELECT * from information_schema.columns 
@@ -45,42 +45,30 @@ const MY_SQL_FK = `SELECT
    ON ccu.constraint_name = tc.constraint_name
    WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_schema=$1 AND tc.table_name=$2`
 
-class TableModel{
-   schema
-   table
-   full_table_name
-   pg_client
-   /** @type Col[] */ cols
 
+
+
+module.exports = {
    /**
     * 
     * @param {string} schema 
     * @param {string} table 
-    * @param {pg.PoolClient} pg_client 
+    * @returns {Col[]}
     */
-   constructor(schema, table, pg_client){
-      this.schema = schema
-      this.table = table
-      this.full_table_name = schema + '.' + table
-      this.pg_client = pg_client
-   }
+   async spCreateCols(schema, table) {
+      let db_cols = await queryAll(MY_SQL_COLS, [DB_SETTINGS.database, schema, table])
+      let cols = db_cols.map(el => new Col(el))
+      /** @type {IFk[]} */
+      let db_fk = await queryAll(MY_SQL_FK, [schema, table]) 
 
-   async CreateCols(){
-      let {rows} = await this.pg_client.query(MY_SQL_COLS, [DB_SETTINGS.database, this.schema, this.table])
-      this.cols = rows.map(el => new Col(el))
-      /** @type {{rows: IFk[]}} */
-      let fk_arr = await pool.query(MY_SQL_FK, [this.schema, this.table])
-
-      for (let fk of fk_arr.rows){
-         let col = this.cols.find(el => el.column_name === fk.column_name)
+      for (let fk of db_fk){
+         let col = cols.find(el => el.column_name === fk.column_name)
          if (col){
             col.data_type = 'fk'
             col.fk = new Fk(fk, 'name')
          }  
       }
+
+      return cols
    }
 }
-
-
-
-module.exports = {TableModel}
