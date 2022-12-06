@@ -16,12 +16,13 @@ import { CreateRoutes } from './router';
 import { CreateApi } from './api';
 
 async function start() {
-   let data = await fetch(`${API_PATH}/init`)
+   let data = await fetch(`${API_PATH}/init`, {method: 'POST', body: '{}'})
    if (!data.ok) return;
-   let tables = await data.json()
-   CreateMenuItems(tables)
-   CreateApi(tables, API_PATH)
-   let routes = CreateRoutes(tables)
+   let {result} = await data.json()
+   if (!result) return console.log("Ошибка при получении данных с сервера");
+   CreateMenuItems(result)
+   CreateApi(result, API_PATH)
+   let routes = CreateRoutes(result)
    const router = createRouter({ history: createWebHistory(SMART_PANEL_PATH), routes })
    createApp(App).use(PrimeVue).use(router).mount("#root")
 }

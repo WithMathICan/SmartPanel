@@ -2,9 +2,12 @@ import { showMessage } from "./messages";
 
 export const api = {}
 
-async function get(url) {
+async function post(url, body = '') {
+   if (typeof body === 'object') body = JSON.stringify(body)
+   if (typeof body !== 'string') return console.error("typeof body !== 'string'");
+   
    try {
-      let data = await fetch(url)
+      let data = await fetch(url, {method: 'POST', body})
       if (!data.ok) {
          let { message } = await data.json()
          if (message) showMessage(message, 15000, 'error')
@@ -24,9 +27,9 @@ export function CreateApi(tables, API_PATH) {
       api[schema] = {}
       for (let table of tables[schema]) {
          api[schema][table] = {}
-         api[schema][table].GetColsData = () => get(`${API_PATH}/${schema}/${table}/cols`)
-         api[schema][table].GetBeans = () => get(`${API_PATH}/${schema}/${table}/beans`)
-         api[schema][table].GetBean = (id) => get(`${API_PATH}/${schema}/${table}/bean/${id}`)
+         api[schema][table].GetColsData = () => post(`${API_PATH}/${schema}/${table}/cols`)
+         api[schema][table].GetBeans = () => post(`${API_PATH}/${schema}/${table}/beans`)
+         api[schema][table].GetBean = (id) => post(`${API_PATH}/${schema}/${table}/bean`, {id})
       }
    }
 }
