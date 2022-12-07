@@ -3,11 +3,17 @@
 <div v-if="tableKey && Array.isArray(spBeans[tableKey])">
 <DataTable  responsiveLayout="scroll" :value="spBeans[tableKey]" dataKey="id" :rowHover="true" v-model:selection="selectedBeans"  >
    <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+   <Column field="id" header="ID">
+      <template #body="slotProps">
+         <router-link class="link p-button p-button-info" :to="linkToEdit(slotProps.data)">
+            {{slotProps.data.id}}
+         </router-link>
+      </template>
+   </Column>
    <span v-for="col of spColsData[tableKey]">
       <Column :field="col.column_name" :header="col.column_name" >
          <template #body="slotProps">
-            <ColId v-if="col.data_type === 'id'" :bean="slotProps.data" :col="col" />
-            <ColFk v-else-if="col.data_type === 'fk'" :col="col" :bean="slotProps.data" />
+            <ColFk v-if="col.data_type === 'fk'" :col="col" :bean="slotProps.data" />
             <ColDate v-else-if="col.data_type === 'date'" :bean="slotProps.data" :col="col" />
             <ColNumber v-else-if="col.data_type === 'number'" :bean="slotProps.data" :col="col" />
             <ColString v-else-if="col.data_type === 'varchar'" :data="slotProps.data[col.column_name].substring(0, 150)"/>
@@ -23,7 +29,6 @@ import {defineProps, onMounted, watch, ref} from 'vue'
 import { FillBeans, FillColsData, spTableKey, spBeans, spColsData } from '../store';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import ColId from './cols/ColId.vue'
 import ColString from './cols/ColString.vue'
 import ColFk from './cols/ColFk.vue'
 import ColDate from './cols/ColDate.vue'
@@ -43,5 +48,15 @@ function init(){
 
 onMounted(init)
 watch(() => [props.schema, props.table], init)
+function linkToEdit(bean){
+   return {name: 'edit', params: {schema: props.schema, table: props.table, id: bean.id}}
+}
 
 </script>
+
+<style lang="scss" scoped>
+.link{
+   text-decoration: none;
+   font-weight: 900;
+}
+</style>

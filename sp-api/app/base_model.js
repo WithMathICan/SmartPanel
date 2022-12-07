@@ -12,6 +12,7 @@ const { spCreateCols } = require('./sp-functions');
 const BaseModel = (schema, table) => ({
    async cols() {
       let result = await spCreateCols(schema, table)
+      result = result.filter(el => el.column_name !== 'id')
       if (result.length === 0) return {statusCode: 404, message: 'Данная таблица не существует'}
       return { statusCode: 200, result }
    },
