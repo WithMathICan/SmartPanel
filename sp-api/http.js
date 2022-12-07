@@ -45,7 +45,7 @@ module.exports = function server(actions, port) {
 
       if (method === 'POST') {
          let handler = actions[url]
-         if (!handler) return res.end("Not Found");
+         if (!handler) return res.end(JSON.stringify({message: "Not Found"}));
          let args = await receiveArgs(req)
          try {
             console.log({ args });
@@ -60,6 +60,6 @@ module.exports = function server(actions, port) {
          }
       }
 
-      res.end("Not Found")
+      res.end(JSON.stringify({message: "Not Found"}));
    }).listen(port, () => console.log("Api server started on port ", port))
 }

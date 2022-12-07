@@ -1,5 +1,7 @@
 import { showMessage } from "./messages";
 
+
+/** @type {import("./api").TSpApi} */
 export const api = {}
 
 async function post(url, body = '') {
@@ -22,6 +24,11 @@ async function post(url, body = '') {
    }
 }
 
+/**
+ * 
+ * @param {Record<string, string[]>} tables 
+ * @param {string} API_PATH 
+ */
 export function CreateApi(tables, API_PATH) {
    for (let schema in tables) {
       api[schema] = {}
@@ -30,6 +37,7 @@ export function CreateApi(tables, API_PATH) {
          api[schema][table].GetColsData = () => post(`${API_PATH}/${schema}/${table}/cols`)
          api[schema][table].GetBeans = () => post(`${API_PATH}/${schema}/${table}/beans`)
          api[schema][table].GetBean = (id) => post(`${API_PATH}/${schema}/${table}/bean`, {id})
+         api[schema][table].SaveBean = (bean) => post(`${API_PATH}/${schema}/${table}/save`, {bean})
       }
    }
 }

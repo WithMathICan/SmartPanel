@@ -69,5 +69,7 @@ module.exports = {
       }
 
       return cols
-   }
+   },
+
+   spTableName: (schema, table) => `${schema}.${table}`
 }

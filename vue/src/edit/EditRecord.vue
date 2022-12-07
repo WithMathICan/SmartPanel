@@ -3,18 +3,26 @@
    <h1 class="text-700">{{ table }}</h1>
    <Card>
       <template #content>
-         <EditForm :schema="schema" :table="table" :bean="bean" />
+         <form  v-on:submit.prevent="save">
+            <EditForm :schema="schema" :table="table" :bean="bean" />
+            <div class="mt-3">
+               <Button label="Submit" type="submit" icon="pi pi-check" iconPos="right" class="p-button-success"></Button>
+            </div>
+         </form>
       </template>
    </Card>
 </template>
 
 <script setup>
 import { onMounted, ref, watch } from 'vue';
-import { api } from '../api';
-import { FillColsData, spTableKey, spColsData } from '../store';
+import { api } from '../api.js';
+import { FillColsData } from '../store';
 import Card from 'primevue/card'
 import EditForm from './edit-form/EditForm.vue';
-let props = defineProps({ schema: String, table: String, id: String })
+import Button from 'primevue/button';
+
+/** @type {{schema: string, table: string, id: string}} */
+let props = defineProps(['schema', 'table', 'id'])
 
 let bean = ref(null)
 function init() {
@@ -24,5 +32,10 @@ function init() {
 
 onMounted(init)
 watch(() => [props.schema, props.table, props.id], init)
-
+function save(){
+   console.log('save');
+   api[props.schema][props.table].SaveBean(bean.value).then(data => {
+      console.log(data);
+   })
+}
 </script>
