@@ -1,5 +1,6 @@
 'use strict'
 
+const assert = require('node:assert');
 const http = require('node:http');
 
 const HEADERS = {
@@ -13,20 +14,18 @@ const HEADERS = {
 };
 
 const receiveArgs = async (req) => {
-   const buffers = [];
-   for await (const chunk of req) buffers.push(chunk);
-   const data = Buffer.concat(buffers).toString();
-   let emptyObject = {}
-   if (data) {
-      try {
-         let parsedData = JSON.parse(data);
-         return (typeof parsedData === 'object') ? parsedData : emptyObject
-      }
-      catch (e) {
-         return emptyObject
-      }
+   try {
+      const buffers = [];
+      for await (const chunk of req) buffers.push(chunk);
+      const data = Buffer.concat(buffers).toString();
+      if (!data) return {}
+      let parsedData = JSON.parse(data);
+      assert(typeof parsedData === 'object', "ParsedData shold be an object")
+      return parsedData
+   } catch (e) {
+      console.log(e);
+      return {}
    }
-   return emptyObject
 };
 
 
@@ -49,7 +48,7 @@ module.exports = function server(actions, port) {
          if (!handler) return res.end("Not Found");
          let args = await receiveArgs(req)
          try {
-            console.log({args});
+            console.log({ args });
             let { statusCode, result, message } = await handler(args)
             res.statusCode = statusCode
             return res.end(JSON.stringify({ message, result }))

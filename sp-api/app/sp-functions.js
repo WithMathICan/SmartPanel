@@ -1,9 +1,8 @@
 'use strict';
 
-const pg = require('pg');
 const { Col } = require('common/col');
 const {Fk} = require('common/fk')
-const { pool, queryAll, queryFirst } = require('./pg_pool');
+const {queryAll} = require('./pg_pool');
 const { DB_SETTINGS } = require('../config');
 /** @typedef {import("common/col").IFk} IFk */
 
