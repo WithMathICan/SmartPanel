@@ -1,5 +1,5 @@
 <template>
-<h1 class="text-700">{{table}}</h1>
+<h1 class="text-700 mb-2">{{table}}</h1>
 <div v-if="tableKey && Array.isArray(spBeans[tableKey])">
 <DataTable  responsiveLayout="scroll" :value="spBeans[tableKey]" dataKey="id" :rowHover="true" v-model:selection="selectedBeans"  >
    <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
@@ -40,7 +40,6 @@ let tableKey = ref('')
 let selectedBeans = ref([])
 
 function init(){
-   console.log(`Init ${props.table}`);
    tableKey.value = spTableKey(props.schema, props.table)
    FillBeans(props.schema, props.table)
    FillColsData(props.schema, props.table)
@@ -54,7 +53,7 @@ function linkToEdit(bean){
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .link{
    text-decoration: none;
    font-weight: 900;

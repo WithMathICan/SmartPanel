@@ -56,7 +56,7 @@ module.exports = function server(actions, port) {
          catch (e) {
             console.error(e);
             res.statusCode = 500
-            return res.end(JSON.stringify({ message: "Server error" }))
+            return res.end(JSON.stringify({ message: "Server error. " + e.message}))
          }
       }
 

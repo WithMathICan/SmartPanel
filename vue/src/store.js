@@ -21,3 +21,15 @@ export async function FillBeans(schema, table, refresh = false){
    spBeans[key] = await api[schema][table].GetBeans()
 }
 
+export function UpdateBeans(schema, table, bean){
+   let key = spTableKey(schema, table)
+   if (!bean.id || !Array.isArray(spBeans[key])) return
+   let oldBean = spBeans[key].find(el => el.id === bean.id)
+   if (oldBean){
+      for (let bkey in oldBean) if (bkey in bean) oldBean[bkey] = bean[bkey]
+   }
+   else {
+      spBeans[key] = {bean, ...spBeans[key]}
+   }
+}
+

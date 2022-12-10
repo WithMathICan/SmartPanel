@@ -1,6 +1,8 @@
 // ------------------------------------- CSS
 // import 'primevue/resources/themes/saga-purple/theme.css'
-import 'primevue/resources/themes/lara-light-purple/theme.css'
+import 'primevue/resources/themes/lara-light-blue/theme.css'
+// import 'primevue/resources/themes/saga-purple/theme.css'
+// import 'primevue/resources/themes/lara-light-purple/theme.css'
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
 import './index.scss'

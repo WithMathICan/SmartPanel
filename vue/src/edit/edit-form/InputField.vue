@@ -28,7 +28,8 @@ import InputFk from './InputFk.vue'
 let props = defineProps(['bean', 'col']) 
 
 if (props.col.data_type === 'date') {
-   props.bean[props.col.column_name] = new Date(props.bean[props.col.column_name])
+   let date = Date.parse(props.bean[props.col.column_name])
+   props.bean[props.col.column_name] = date ? new Date(date) : new Date()
 }
 
 

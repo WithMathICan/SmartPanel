@@ -31,10 +31,9 @@ const BaseModel = (schema, table) => ({
    async save({ bean }) {
       let id = bean.id
       delete bean.id
-      let savedBean = id
-         ? await db(spTableName(schema, table), pool).update(id, bean)
-         : await db(spTableName(schema, table), pool).create(bean)
-      if (savedBean) return { statusCode: 200, result: savedBean, message: 'Успешно сохранено' }
+      let fdb = db(spTableName(schema, table), pool)
+      let savedBean = id ? await fdb.update(id, bean) : await fdb.create(bean)
+      if (savedBean) return { statusCode: id ? 200 : 201, result: savedBean, message: 'Успешно сохранено' }
       else return { statusCode: 404, message: "Ошибка при сохранении" }
    }
 })
