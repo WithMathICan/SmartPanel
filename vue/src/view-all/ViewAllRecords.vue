@@ -1,26 +1,29 @@
 <template>
 <h1 class="text-700 mb-2">{{table}}</h1>
 <div v-if="tableKey && Array.isArray(spBeans[tableKey])">
-<DataTable  responsiveLayout="scroll" :value="spBeans[tableKey]" dataKey="id" :rowHover="true" v-model:selection="selectedBeans"  >
-   <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-   <Column field="id" header="ID">
-      <template #body="slotProps">
-         <router-link class="link p-button p-button-info" :to="linkToEdit(slotProps.data)">
-            {{slotProps.data.id}}
-         </router-link>
-      </template>
-   </Column>
-   <span v-for="col of spColsData[tableKey]">
-      <Column :field="col.column_name" :header="col.column_name" >
+   <div class="mt-2 mb-2">
+      <router-link class="link p-button p-button-warning" :to="{name: 'new', params: {schema, table}}">Создать</router-link>
+   </div>
+   <DataTable  responsiveLayout="scroll" :value="spBeans[tableKey]" dataKey="id" :rowHover="true" v-model:selection="selectedBeans"  >
+      <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+      <Column field="id" header="ID">
          <template #body="slotProps">
-            <ColFk v-if="col.data_type === 'fk'" :col="col" :bean="slotProps.data" />
-            <ColDate v-else-if="col.data_type === 'date'" :bean="slotProps.data" :col="col" />
-            <ColNumber v-else-if="col.data_type === 'number'" :bean="slotProps.data" :col="col" />
-            <ColString v-else-if="col.data_type === 'varchar'" :data="slotProps.data[col.column_name].substring(0, 150)"/>
+            <router-link class="link p-button p-button-info" :to="linkToEdit(slotProps.data)">
+               {{slotProps.data.id}}
+            </router-link>
          </template>
       </Column>
-   </span>
-</DataTable>
+      <span v-for="col of spColsData[tableKey]">
+         <Column :field="col.column_name" :header="col.column_name" >
+            <template #body="slotProps">
+               <ColFk v-if="col.data_type === 'fk'" :col="col" :bean="slotProps.data" />
+               <ColDate v-else-if="col.data_type === 'date'" :bean="slotProps.data" :col="col" />
+               <ColNumber v-else-if="col.data_type === 'number'" :bean="slotProps.data" :col="col" />
+               <ColString v-else-if="col.data_type === 'varchar'" :data="slotProps.data[col.column_name].substring(0, 150)"/>
+            </template>
+         </Column>
+      </span>
+   </DataTable>
 </div>
 </template>
 

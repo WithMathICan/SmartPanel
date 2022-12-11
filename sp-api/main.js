@@ -33,7 +33,7 @@ function CreateSmartPanelActions(db_tables) {
       for (let table of db_tables[schema]) {
          let obj = BaseModel(schema, table)
          for (let key in obj) if (typeof obj[key] === 'function') {
-            sp_actions[`${SMART_PANEL_API_PREFIX}/${schema}/${table}/${key}`] = obj[key]
+            sp_actions[`${SMART_PANEL_API_PREFIX}/${schema}/${table}/${key.replace('_', '-')}`] = obj[key]
          }
       }
    }

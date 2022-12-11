@@ -21,7 +21,7 @@
 <script setup>
 import {menu_items} from './menu-items'
 import Menubar from 'primevue/menubar';
-import {messages} from './messages'
+import {messages, msgClose} from './messages'
 import Message from 'primevue/message'
 </script>
 

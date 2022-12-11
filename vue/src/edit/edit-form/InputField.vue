@@ -1,15 +1,15 @@
 <template>
 <div v-if="col.data_type === 'varchar'">
-   <label :for="col.column_name">{{col.column_name}}</label>
-   <InputText class="w-full" :id="col.column_name" type="text" v-model="bean[col.column_name]"/>
+   <label :for="col.column_name">{{col.column_name}}<span class="text-red" v-if="!col.is_nullable">*</span></label>
+   <InputText class="w-full" :required="!col.is_nullable" :id="col.column_name" type="text" v-model="bean[col.column_name]"/>
 </div>
 <div v-else-if="col.data_type === 'number'">
-   <label :for="col.column_name">{{col.column_name}}</label>
-   <InputNumber class="w-full" :id="col.column_name" v-model="bean[col.column_name]" />
+   <label :for="col.column_name">{{col.column_name}}<span class="text-red" v-if="!col.is_nullable">*</span></label>
+   <InputNumber class="w-full" :required="!col.is_nullable" :id="col.column_name" v-model.number="bean[col.column_name]" />
 </div>
 <div v-else-if="col.data_type === 'date'">
-   <label :for="col.column_name">{{col.column_name}}</label>
-   <Calendar class="w-full" v-model="bean[col.column_name]" :showTime="true" />
+   <label :for="col.column_name">{{col.column_name}}<span class="text-red" v-if="!col.is_nullable">*</span></label>
+   <Calendar class="w-full" :required="!col.is_nullable" v-model="bean[col.column_name]" :showTime="true" />
 </div>
 <div v-else-if="col.data_type === 'fk'">
    <InputFk :bean="bean" :col="col"></InputFk>

@@ -1,18 +1,18 @@
-import {RouteRecordRaw} from 'vue-router'
+import { RouteRecordRaw } from 'vue-router'
 import ViewAllRecords from './view-all/ViewAllRecords.vue'
 import EditRecord from './edit/EditRecord.vue'
 import CopyRecord from './edit/CopyRecord.vue'
-import NewRecord from './edit/NewRecord.vue'
+import CreateRecord from './edit/CreateRecord.vue'
 import NotFound from './NotFound.vue'
 
-export function CreateRoutes(tables){
+export function CreateRoutes(tables) {
    /**@type {RouteRecordRaw[]} */
    let routes = []
-   for (let schema in tables){
-      for (let table of tables[schema]){
-         routes.push({ 
+   for (let schema in tables) {
+      for (let table of tables[schema]) {
+         routes.push({
             name: `view_all_${schema}_${table}`,
-            path: `/${schema}/${table}`, 
+            path: `/${schema}/${table}`,
             component: <ViewAllRecords table={table} schema={schema} />
          })
       }
@@ -31,7 +31,7 @@ export function CreateRoutes(tables){
       routes.push({
          path: `/:schema/:table/new`,
          name: 'new',
-         component: NewRecord,
+         component: CreateRecord,
          props: true,
       })
       routes.push({

@@ -10,10 +10,34 @@ const { spCreateCols, spTableName } = require('./sp-functions');
  * @returns {import("common/definitions").ITableApi}
  */
 const BaseModel = (schema, table) => ({
-   async cols() {
+   async cols_data() {
       let result = await spCreateCols(schema, table)
       result = result.filter(el => el.column_name !== 'id')
       if (result.length === 0) return { statusCode: 404, message: 'Данная таблица не существует' }
+      return { statusCode: 200, result }
+   },
+
+   async cols_create() {
+      let result = await spCreateCols(schema, table)
+      if (result.length === 0) return { statusCode: 404, message: 'Данная таблица не существует' }
+      let hidden_fields = ['id', 'created_at', 'updated_at', 'created_by', 'updated_by']
+      result = result.filter(el => !hidden_fields.includes(el.column_name))
+      return { statusCode: 200, result }
+   },
+
+   async cols_edit() {
+      let result = await spCreateCols(schema, table)
+      if (result.length === 0) return { statusCode: 404, message: 'Данная таблица не существует' }
+      let hidden_fields = ['id', 'created_at', 'updated_at', 'created_by', 'updated_by']
+      result = result.filter(el => !hidden_fields.includes(el.column_name))
+      return { statusCode: 200, result }
+   },
+
+   async cols_copy() {
+      let result = await spCreateCols(schema, table)
+      if (result.length === 0) return { statusCode: 404, message: 'Данная таблица не существует' }
+      let hidden_fields = ['id', 'created_at', 'updated_at', 'created_by', 'updated_by']
+      result = result.filter(el => !hidden_fields.includes(el.column_name))
       return { statusCode: 200, result }
    },
 

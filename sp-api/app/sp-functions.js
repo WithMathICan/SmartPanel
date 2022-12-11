@@ -52,7 +52,7 @@ module.exports = {
     * 
     * @param {string} schema 
     * @param {string} table 
-    * @returns {Col[]}
+    * @returns {Promise<Col[]>}
     */
    async spCreateCols(schema, table) {
       let db_cols = await queryAll(MY_SQL_COLS, [DB_SETTINGS.database, schema, table])

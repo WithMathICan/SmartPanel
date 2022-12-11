@@ -4,14 +4,13 @@
    <div class="mt-2 mb-2">
       <router-link class="link p-button" :to="{name: `view_all_${schema}_${table}`}">Все записи</router-link>
    </div>
-   <Card>
+   <Card v-if="bean && cols.length>0">
       <template #content>
          <form  v-on:submit.prevent="save">
-            <EditForm :schema="schema" :table="table" :bean="bean" />
+            <EditForm :cols="cols" :bean="bean" />
             <div class="mt-3">
-               <Button label="Сохранить" type="submit" icon="pi pi-save" iconPos="right" class="p-button-success"></Button>
+               <Button label="Сохранить" :loading="loading" type="submit" icon="pi pi-save" iconPos="right" class="p-button-success"></Button>
                <router-link class="link p-button" :to="{name: 'copy', params: {schema, table, id}}">Все записи</router-link>
-               <Button label="Сохранить" to="/" type="button" icon="pi pi-copy" iconPos="right" class="p-button-success"></Button>
             </div>
          </form>
       </template>
@@ -21,25 +20,32 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue';
 import { api } from '../api.js';
-import { FillColsData, UpdateBeans } from '../store';
+import { UpdateBeans, loading } from '../store';
 import Card from 'primevue/card'
 import EditForm from './edit-form/EditForm.vue';
 import Button from 'primevue/button';
+import { useRouter } from 'vue-router';
 
 /** @type {{schema: string, table: string, id: string}} */
 let props = defineProps(['schema', 'table', 'id'])
 
 let bean = ref(null)
+let cols = ref([])
+let router = useRouter()
 function init() {
-   FillColsData(props.schema, props.table)
-   api[props.schema][props.table].GetBean(props.id).then(data => { bean.value = data })
+   api[props.schema][props.table].GetColsCopy().then(data => cols.value = data)
+   api[props.schema][props.table].GetBean(props.id).then(data => {
+      delete data.id
+      bean.value = data
+   })
 }
 
 onMounted(init)
 watch(() => [props.schema, props.table, props.id], init)
 function save(){
-   console.log('save');
    api[props.schema][props.table].SaveBean(bean.value).then(data => {
+      if (!data || !data.id) return
+      router.push({name: 'edit', params: {...props, id: data.id}})
       UpdateBeans(props.schema, props.table, data)
    })
 }

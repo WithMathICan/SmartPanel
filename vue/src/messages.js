@@ -23,6 +23,10 @@ export function msgClose(id){
    delete messages[id]
 }
 
+export function ClearMessages(){
+   for (let key in messages) delete messages[key]
+}
+
 function msgsIsAlmostCoincide(msg1, msg2){
    return msg1.content === msg2.content && msg1.severity === msg2.severity && msg1.closable === msg2.closable
 }

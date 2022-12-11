@@ -3,7 +3,6 @@
    <h1 class="text-700 mb-2">{{ table }}</h1>
    <div class="mt-2 mb-2">
       <router-link class="link p-button" :to="{name: `view_all_${schema}_${table}`}">Все записи</router-link>
-      <router-link class="link p-button p-button-warning" :to="{name: 'new', params: {schema, table}}">Создать</router-link>
    </div>
    <Card v-if="bean && cols.length>0">
       <template #content>
@@ -11,8 +10,6 @@
             <EditForm :cols="cols" :bean="bean" />
             <div class="mt-3">
                <Button label="Сохранить" :loading="loading" type="submit" icon="pi pi-save" iconPos="right" class="p-button-success"></Button>
-               <router-link class="link p-button" :to="{name: 'copy', params: {schema, table, id}}">Копировать</router-link>
-               <router-link class="link p-button p-button-warning" :to="{name: 'new', params: {schema, table}}">Создать</router-link>
             </div>
          </form>
       </template>
@@ -26,21 +23,39 @@ import { UpdateBeans, loading } from '../store';
 import Card from 'primevue/card'
 import EditForm from './edit-form/EditForm.vue';
 import Button from 'primevue/button';
+import { useRouter } from 'vue-router';
 
-/** @type {{schema: string, table: string, id: string}} */
-let props = defineProps(['schema', 'table', 'id'])
+/** @type {{schema: string, table: string}} */
+let props = defineProps(['schema', 'table'])
 
-let bean = ref(null)
+let router = useRouter()
+
+let bean = ref({})
 let cols = ref([])
 function init() {
-   api[props.schema][props.table].GetColsEdit(props.id).then(data => cols.value = data)
-   api[props.schema][props.table].GetBean(props.id).then(data => bean.value = data)
+   api[props.schema][props.table].GetColsCreate().then(ColsObtained)
+}
+
+/** @param {import('common/col').Col[]} dataCols */
+function ColsObtained(dataCols){
+   cols.value = dataCols
+   for (let col of dataCols) if (col.column_default !== null) {
+      if (col.data_type === 'date'){
+         if (col.column_default.toLowerCase() === 'now()') bean.value[col.column_name] = new Date()
+         let date = Date.parse(col.column_default)
+         bean.value[col.column_name] = date ? new Date(date) : new Date()
+      }
+      else if (col.data_type === 'number') bean.value[col.column_name] = +col.column_default 
+      else bean.value[col.column_name] = col.column_default
+   }
 }
 
 onMounted(init)
-watch(() => [props.schema, props.table, props.id], init)
+watch(() => [props.schema, props.table], init)
 function save(){
    api[props.schema][props.table].SaveBean(bean.value).then(data => {
+      if (!data || !data.id) return
+      router.push({name: 'edit', params: {...props, id: data.id}})
       UpdateBeans(props.schema, props.table, data)
    })
 }
