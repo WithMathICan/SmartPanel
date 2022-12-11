@@ -59,6 +59,12 @@ const BaseModel = (schema, table) => ({
       let savedBean = id ? await fdb.update(id, bean) : await fdb.create(bean)
       if (savedBean) return { statusCode: id ? 200 : 201, result: savedBean, message: 'Успешно сохранено' }
       else return { statusCode: 404, message: "Ошибка при сохранении" }
+   },
+
+   async remove({ids}){
+      console.log({ids});
+      let deletedIds = await db(spTableName(schema, table), pool).removeMany(ids)
+      return {statusCode: 200, result: deletedIds}
    }
 })
 

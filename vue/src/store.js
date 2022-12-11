@@ -1,5 +1,6 @@
 import {reactive, ref} from 'vue'
 import {api} from './api.js'
+import { showMessage } from './messages.js'
 
 export const spTableKey = (schema, table) => `${schema}.${table}`
 export const spColsData = reactive({})
@@ -17,18 +18,6 @@ async function FillCols(schema, table, spCols, getMethod, refresh){
 export function FillColsData(schema, table, refresh = false){
    return FillCols(schema, table, spColsData, api[schema][table].GetColsData, refresh)
 }
-
-// export function FillColsCreate(schema, table, refresh = false){
-//    return FillCols(schema, table, spColsCreate, api[schema][table].GetColsCreate, refresh)
-// }
-
-// export function FillColsEdit(schema, table, refresh = false){
-//    return FillCols(schema, table, spColsCreate, api[schema][table].GetColsEdit, refresh)
-// }
-
-// export function FillColsCopy(schema, table, refresh = false){
-//    return FillCols(schema, table, spColsCreate, api[schema][table].GetColsCopy, refresh)
-// }
 
 export async function FillBeans(schema, table, refresh = false){
    let key = spTableKey(schema, table)
@@ -48,5 +37,21 @@ export function UpdateBeans(schema, table, bean){
    else {
       spBeans[key] = {bean, ...spBeans[key]}
    }
+}
+
+/**
+ * 
+ * @param {string} schema 
+ * @param {string} table 
+ * @param {string[]} ids 
+ * @param {Function} callback
+ */
+export function RemoveBeans(schema, table, ids, callback = () => {}){
+   let key = spTableKey(schema, table)
+   api[schema][table].RemoveBeans(ids).then(deletedIds => {
+      if (!Array.isArray(deletedIds)) return showMessage('Ошибка при удалении', 5000, 'error')
+      if (Array.isArray(spBeans[key])) spBeans[key] = spBeans[key].filter(el => !deletedIds.includes(el.id))
+      callback()
+   })
 }
 

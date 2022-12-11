@@ -11,6 +11,7 @@ import './index.scss'
 import { createApp } from 'vue';
 import App from './App.vue';
 import PrimeVue from 'primevue/config';
+import ConfirmationService from 'primevue/confirmationservice';
 import { CreateMenuItems } from './menu-items';
 import { API_PATH, SMART_PANEL_PATH } from '../config'
 import { createRouter, createWebHistory } from 'vue-router'
@@ -26,7 +27,7 @@ async function start() {
    CreateApi(result, API_PATH)
    let routes = CreateRoutes(result)
    const router = createRouter({ history: createWebHistory(SMART_PANEL_PATH), routes })
-   createApp(App).use(PrimeVue).use(router).mount("#root")
+   createApp(App).use(PrimeVue).use(ConfirmationService).use(router).mount("#root")
 }
 
 start()

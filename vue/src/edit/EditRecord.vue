@@ -10,13 +10,15 @@
          <form  v-on:submit.prevent="save">
             <EditForm :cols="cols" :bean="bean" />
             <div class="mt-3">
-               <Button label="Сохранить" :loading="loading" type="submit" icon="pi pi-save" iconPos="right" class="p-button-success"></Button>
-               <router-link class="link p-button" :to="{name: 'copy', params: {schema, table, id}}">Копировать</router-link>
-               <router-link class="link p-button p-button-warning" :to="{name: 'new', params: {schema, table}}">Создать</router-link>
+               <Button label="Сохранить" :loading="loading" type="submit" icon="pi pi-save" iconPos="right" class="p-button-success mr-1"></Button>
+               <router-link class="link p-button mr-1" :to="{name: 'copy', params: {schema, table, id}}">Копировать</router-link>
+               <router-link class="link p-button p-button-warning mr-1" :to="{name: 'new', params: {schema, table}}">Создать</router-link>
+               <ButtonDelete :schema="schema" :table="table" :id="id" />
             </div>
          </form>
       </template>
    </Card>
+  
 </template>
 
 <script setup>
@@ -26,6 +28,8 @@ import { UpdateBeans, loading } from '../store';
 import Card from 'primevue/card'
 import EditForm from './edit-form/EditForm.vue';
 import Button from 'primevue/button';
+import ButtonDelete from './ButtonDelete.vue';
+
 
 /** @type {{schema: string, table: string, id: string}} */
 let props = defineProps(['schema', 'table', 'id'])

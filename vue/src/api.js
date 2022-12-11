@@ -12,7 +12,7 @@ async function post(url, body = '') {
    try {
       let data = await fetch(url, { method: 'POST', body })
       loading.value = true
-      ClearMessages()
+      // ClearMessages()
       if (!data.ok) {
          let { message } = await data.json()
          if (message) showMessage(message, 15000, 'error')
@@ -46,6 +46,7 @@ export function CreateApi(tables, API_PATH) {
          api[schema][table].GetBeans = () => post(`${API_PATH}/${schema}/${table}/beans`)
          api[schema][table].GetBean = (id) => post(`${API_PATH}/${schema}/${table}/bean`, { id })
          api[schema][table].SaveBean = (bean) => post(`${API_PATH}/${schema}/${table}/save`, { bean })
+         api[schema][table].RemoveBeans = (ids) => post(`${API_PATH}/${schema}/${table}/remove`, { ids })
       }
    }
 }

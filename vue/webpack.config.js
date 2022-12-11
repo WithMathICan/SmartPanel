@@ -18,6 +18,7 @@ const cssLoaders = [
 
 module.exports = {
    mode: isProd ? "production" : "development",
+   devtool: 'source-map',
    entry: {
       SmartPanel: './src/index.js',
    },
