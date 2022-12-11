@@ -3,6 +3,7 @@
 <div v-if="tableKey && Array.isArray(spBeans[tableKey])">
    <div class="mt-2 mb-2">
       <router-link class="link p-button p-button-warning" :to="{name: 'new', params: {schema, table}}">Создать</router-link>
+      <ButtonDelete :schema="schema" :table="table" :ids="selectedBeans.map(el => el.id)" label="Удалить" />
    </div>
    <DataTable  responsiveLayout="scroll" :value="spBeans[tableKey]" dataKey="id" :rowHover="true" v-model:selection="selectedBeans"  >
       <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
@@ -36,6 +37,7 @@ import ColString from './cols/ColString.vue'
 import ColFk from './cols/ColFk.vue'
 import ColDate from './cols/ColDate.vue'
 import ColNumber from './cols/ColNumber.vue'
+import ButtonDelete from '../ButtonDelete.vue';
 
 const props = defineProps({schema: String, table: String})
 
