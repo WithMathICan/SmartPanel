@@ -35,7 +35,7 @@ export function UpdateBeans(schema, table, bean){
       for (let bkey in oldBean) if (bkey in bean) oldBean[bkey] = bean[bkey]
    }
    else {
-      spBeans[key] = {bean, ...spBeans[key]}
+      spBeans[key] = [bean, ...spBeans[key]]
    }
 }
 
@@ -51,7 +51,7 @@ export function RemoveBeans(schema, table, ids, callback = () => {}){
    api[schema][table].RemoveBeans(ids).then(deletedIds => {
       if (!Array.isArray(deletedIds)) return showMessage('Ошибка при удалении', 5000, 'error')
       if (Array.isArray(spBeans[key])) spBeans[key] = spBeans[key].filter(el => !deletedIds.includes(el.id))
-      callback()
+      callback(deletedIds)
    })
 }
 

@@ -9,16 +9,9 @@ import ConfirmPopup from 'primevue/confirmpopup';
 import { useConfirm } from "primevue/useconfirm";
 import Button from 'primevue/button';
 import { loading, RemoveBeans } from './store'
-import { useRoute, useRouter } from 'vue-router';
 
-let props = defineProps(['schema', 'table', 'ids', 'label'])
-let router = useRouter()
-let route = useRoute()
+let props = defineProps(['schema', 'table', 'ids', 'label', 'deleteCb'])
 
-function GoToAll(){
-   let name = `view_all_${props.schema}_${props.table}`
-   if (route.name !== name) router.push({ name })
-}
 
 const confirm = useConfirm();
 const confirmDelete = (event) => {
@@ -30,7 +23,7 @@ const confirmDelete = (event) => {
       acceptClass: 'p-button-danger',
       rejectLabel: 'Не удалять',
       accept: () => {
-         RemoveBeans(props.schema, props.table, props.ids, GoToAll)
+         RemoveBeans(props.schema, props.table, props.ids, props.deleteCb)
       },
       reject: () => { }
    });

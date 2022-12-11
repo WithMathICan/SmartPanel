@@ -13,7 +13,7 @@
                <Button label="Сохранить" :loading="loading" type="submit" icon="pi pi-save" iconPos="right" class="p-button-success mr-1"></Button>
                <router-link class="link p-button mr-1" :to="{name: 'copy', params: {schema, table, id}}">Копировать</router-link>
                <router-link class="link p-button p-button-warning mr-1" :to="{name: 'new', params: {schema, table}}">Создать</router-link>
-               <ButtonDelete :schema="schema" :table="table" :ids="[id]" />
+               <ButtonDelete :schema="schema" :table="table" :ids="[id]" :deleteCb="GoToAll" />
             </div>
          </form>
       </template>
@@ -29,6 +29,7 @@ import Card from 'primevue/card'
 import EditForm from './edit-form/EditForm.vue';
 import Button from 'primevue/button';
 import ButtonDelete from '../ButtonDelete.vue';
+import { useRouter } from 'vue-router';
 
 
 /** @type {{schema: string, table: string, id: string}} */
@@ -47,5 +48,12 @@ function save(){
    api[props.schema][props.table].SaveBean(bean.value).then(data => {
       UpdateBeans(props.schema, props.table, data)
    })
+}
+
+let router = useRouter()
+
+function GoToAll(){
+   let name = `view_all_${props.schema}_${props.table}`
+   router.push({ name })
 }
 </script>
