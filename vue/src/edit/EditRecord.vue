@@ -38,7 +38,7 @@ let props = defineProps(['schema', 'table', 'id'])
 let bean = ref(null)
 let cols = ref([])
 function init() {
-   api[props.schema][props.table].GetColsEdit(props.id).then(data => cols.value = data)
+   api[props.schema][props.table].GetColsEdit().then(data => cols.value = data ?? [])
    api[props.schema][props.table].GetBean(props.id).then(data => bean.value = data)
 }
 

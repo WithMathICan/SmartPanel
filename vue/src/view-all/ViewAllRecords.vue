@@ -1,7 +1,6 @@
 <template>
    <h1 class="text-700 mb-2">{{ table }}</h1>
    <div v-if="tableKey && Array.isArray(spBeans[tableKey])">
-      {{ ids }}
       <div class="mt-2 mb-2">
          <router-link class="link p-button p-button-warning" :to="{ name: 'new', params: { schema, table } }">Создать</router-link>
          <ButtonDelete :schema="schema" :table="table" :ids="ids" label="Удалить" :delete-cb="clearSelected" />
@@ -26,6 +25,7 @@
          <Column header="Actions">
             <template #body="slotProps">
                <ButtonDelete :schema="schema" :table="table" :ids="[slotProps.data.id]" label="" :delete-cb="clearSelected" />
+               <ButtonModalEdit :schema="schema" :table="table" :id="slotProps.data.id" />
             </template>
          </Column>
       </DataTable>
@@ -43,6 +43,7 @@ import ColDate from './cols/ColDate.vue'
 import ColNumber from './cols/ColNumber.vue'
 import ButtonDelete from '../edit/components/ButtonDelete.vue';
 import { computed } from 'vue';
+import ButtonModalEdit from '../edit/components/ButtonModalEdit.vue';
 
 const props = defineProps({ schema: String, table: String })
 

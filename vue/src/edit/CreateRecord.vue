@@ -38,6 +38,7 @@ function init() {
 
 /** @param {import('common/col').Col[]} dataCols */
 function ColsObtained(dataCols){
+   if (!Array.isArray(dataCols)) return
    cols.value = dataCols
    for (let col of dataCols) if (col.column_default !== null) {
       if (col.data_type === 'date'){

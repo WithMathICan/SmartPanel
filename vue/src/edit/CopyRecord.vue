@@ -33,8 +33,9 @@ let bean = ref(null)
 let cols = ref([])
 let router = useRouter()
 function init() {
-   api[props.schema][props.table].GetColsCopy().then(data => cols.value = data)
+   api[props.schema][props.table].GetColsCopy().then(data => cols.value = data ?? [])
    api[props.schema][props.table].GetBean(props.id).then(data => {
+      if (!data) return
       delete data.id
       bean.value = data
    })
