@@ -26,6 +26,10 @@
             <template #body="slotProps">
                <ButtonDelete :schema="schema" :table="table" :ids="[slotProps.data.id]" label="" :delete-cb="clearSelected" />
                <ButtonModalEdit :schema="schema" :table="table" :id="slotProps.data.id" />
+               <router-link class="link p-button p-button-secondary p-button-icon-only" 
+                  :to="{name: 'copy', params: {schema, table, id: slotProps.data.id}}">
+                  <span class="pi pi-copy p-button-icon"></span>
+               </router-link>
             </template>
          </Column>
       </DataTable>

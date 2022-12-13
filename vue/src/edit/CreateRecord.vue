@@ -1,5 +1,5 @@
 <template>
-   <h2 class="font-normal text-blue-500">Редактирование записи</h2>
+   <h2 class="font-normal text-green-500">Создание записи</h2>
    <h1 class="text-700 mb-2">{{ table }}</h1>
    <div class="mt-2 mb-2">
       <router-link class="link p-button" :to="{name: `view_all_${schema}_${table}`}">Все записи</router-link>

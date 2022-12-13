@@ -42,5 +42,4 @@ function save(){
       UpdateBeans(props.schema, props.table, data)
    })
 }
-
 </script>
