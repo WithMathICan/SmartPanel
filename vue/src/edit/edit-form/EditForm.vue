@@ -6,7 +6,7 @@
 
 <script setup>
 import { spTableKey, spColsData } from '../../store';
-import Grid2 from '../../Grid2.vue'
+import Grid2 from '../components/Grid2.vue'
 import InputField from './InputField.vue'
 
 

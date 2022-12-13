@@ -20,7 +20,7 @@ module.exports = {
    mode: isProd ? "production" : "development",
    devtool: 'source-map',
    entry: {
-      SmartPanel: './src/index.js',
+      SmartPanel: './index.js',
    },
    output: {
       path: __dirname + '/out'

@@ -28,7 +28,7 @@ import { UpdateBeans, loading } from '../store';
 import Card from 'primevue/card'
 import EditForm from './edit-form/EditForm.vue';
 import Button from 'primevue/button';
-import ButtonDelete from '../ButtonDelete.vue';
+import ButtonDelete from './components/ButtonDelete.vue';
 import { useRouter } from 'vue-router';
 
 

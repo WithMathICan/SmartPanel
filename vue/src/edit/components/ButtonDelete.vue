@@ -8,7 +8,7 @@
 import ConfirmPopup from 'primevue/confirmpopup';
 import { useConfirm } from "primevue/useconfirm";
 import Button from 'primevue/button';
-import { loading, RemoveBeans } from './store'
+import { loading, RemoveBeans } from '../../store'
 
 let props = defineProps(['schema', 'table', 'ids', 'label', 'deleteCb'])
 

@@ -9,14 +9,14 @@ import './index.scss'
 
 // -------------------------------------- JS
 import { createApp } from 'vue';
-import App from './App.vue';
+import App from './src/App.vue';
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
-import { CreateMenuItems } from './menu-items';
-import { API_PATH, SMART_PANEL_PATH } from '../config'
+import { CreateMenuItems } from './src/menu-items';
+import { API_PATH, SMART_PANEL_PATH } from './config'
 import { createRouter, createWebHistory } from 'vue-router'
-import { CreateRoutes } from './router';
-import { CreateApi } from './api';
+import { CreateRoutes } from './src/router';
+import { CreateApi } from './src/api';
 
 async function start() {
    let data = await fetch(`${API_PATH}/init`, {method: 'POST', body: '{}'})
