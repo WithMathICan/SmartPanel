@@ -1,5 +1,5 @@
 <template>
-   <Button type="button" icon="pi pi-pencil" iconPos="right" class="p-button-info mr-1" @click="openModalEdit"></Button>
+   <Button type="button" icon="pi pi-pencil" iconPos="right" class="p-button-info" @click="openModalEdit"></Button>
    <Dialog header="Редактирование" v-model:visible="showDialog" :modal="true" :breakpoints="{ '960px': '95vw' }"
       :style="{ width: '1200px' }" :maximizable="true">
       <form v-on:submit.prevent="save">

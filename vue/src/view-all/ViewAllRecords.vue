@@ -26,7 +26,7 @@
             <template #body="slotProps">
                <ButtonDelete :schema="schema" :table="table" :ids="[slotProps.data.id]" label="" :delete-cb="clearSelected" />
                <ButtonModalEdit :schema="schema" :table="table" :id="slotProps.data.id" />
-               <router-link class="link p-button p-button-secondary p-button-icon-only" 
+               <router-link class="link p-button p-button-secondary p-button-icon-only p-component" 
                   :to="{name: 'copy', params: {schema, table, id: slotProps.data.id}}">
                   <span class="pi pi-copy p-button-icon"></span>
                </router-link>
@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { defineProps, onMounted, watch, ref } from 'vue'
+import { onMounted, watch, ref } from 'vue'
 import { FillBeans, FillColsData, spTableKey, spBeans, spColsData } from '../store';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
