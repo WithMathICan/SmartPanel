@@ -47,59 +47,46 @@ const MY_SQL_FK = `SELECT
 
 
 
-module.exports = {
 
-   /**
-    * @param {string} schema 
-    * @param {string} table 
-    * @returns {Promise<Col[]>}
-    */
-   async spCreateCols(schema, table) {
-      let db_cols = await queryAll(MY_SQL_COLS, [DB_SETTINGS.database, schema, table])
-      let cols = db_cols.map(el => new Col(el))
-      /** @type {IFk[]} */
-      let db_fk = await queryAll(MY_SQL_FK, [schema, table])
 
-      for (let fk of db_fk) {
-         let col = cols.find(el => el.column_name === fk.column_name)
-         if (col) {
-            col.data_type = 'fk'
-            col.fk = new Fk(fk, 'name')
-         }
+/**
+ * @param {string} schema 
+ * @param {string} table 
+ * @returns {Promise<Col[]>}
+ */
+async function spCreateCols(schema, table) {
+   let db_cols = await queryAll(MY_SQL_COLS, [DB_SETTINGS.database, schema, table])
+   let cols = db_cols.map(el => new Col(el))
+   /** @type {IFk[]} */
+   let db_fk = await queryAll(MY_SQL_FK, [schema, table])
+
+   for (let fk of db_fk) {
+      let col = cols.find(el => el.column_name === fk.column_name)
+      if (col) {
+         col.data_type = 'fk'
+         col.fk = new Fk(fk, 'name')
       }
-
-      return cols
-   },
-
-   spTableName: (schema, table) => `${schema}.${table}`,
-
-   /**
-    * @param {string[]} schemas 
-    * @returns {Record<string, string[]>}
-    */
-   async FindDbTables(schemas) {
-      const db_tables = {};
-      for (let schema of schemas) {
-         let sql = "SELECT table_name FROM information_schema.tables WHERE table_schema = $1"
-         let rows = await queryAll(sql, [schema])
-         if (rows.length > 0) db_tables[schema] = rows.map(el => el.table_name)
-      }
-      return db_tables
-   },
-
-   /** @param {Record<string, string[]>} db_tables  */
-   CreateSmartPanelActions(db_tables) {
-      let sp_actions = {}
-      let BaseModel = require('./app/base_model')
-      for (let schema in db_tables) {
-         for (let table of db_tables[schema]) {
-            let obj = BaseModel(schema, table)
-            for (let key in obj) if (typeof obj[key] === 'function') {
-               sp_actions[`${SMART_PANEL_API_PREFIX}/${schema}/${table}/${key.replace('_', '-')}`] = obj[key]
-            }
-         }
-      }
-      sp_actions[`${SMART_PANEL_API_PREFIX}/init`] = async () => ({statusCode: 200, result: db_tables})
-      return sp_actions
    }
+
+   return cols
 }
+
+const spTableName = (schema, table) => `${schema}.${table}`
+
+/**
+ * @param {string[]} schemas 
+ * @returns {Promise<Record<string, string[]>>}
+ */
+async function spFindDbTables(schemas) {
+   const db_tables = {};
+   for (let schema of schemas) {
+      let sql = "SELECT table_name FROM information_schema.tables WHERE table_schema = $1"
+      let rows = await queryAll(sql, [schema])
+      if (rows.length > 0) db_tables[schema] = rows.map(el => el.table_name)
+   }
+   return db_tables
+}
+
+
+
+module.exports = {spFindDbTables, spTableName, spCreateCols}

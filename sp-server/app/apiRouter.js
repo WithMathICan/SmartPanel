@@ -1,6 +1,8 @@
 'use strict'
 
+
 const assert = require('node:assert');
+const { spFindDbTables } = require('./sp-functions');
 
 const HEADERS = {
    'X-XSS-Protection': '1; mode=block',
@@ -27,10 +29,45 @@ const receiveArgs = async (req) => {
    }
 };
 
-/**
- * @param {string} url 
- * @returns {import('./definitions').IRouterResult}
- */
-async function apiRouter(url){
 
+async function createApiRouter(DB_SCHEMAS){
+   let db_tables = await spFindDbTables(DB_SCHEMAS)
+
+
+   /**
+    * @param {string} url 
+    * @returns {import('./definitions').IRouterResult}
+    */
+   async function apiRouter(url){
+
+   }
+
+   return apiRouter
+}
+
+/**
+ * @callback CApiResult
+ * @param {any} args
+ * @returns {Promise<import('sp-common/main').IApiResult>}
+ */
+
+/** 
+ * @param {string} api_prefix  
+ * @param {Record<string, string[]>} db_tables  
+ * @returns {Record<string, CApiResult>}
+ */
+function CreateSmartPanelActions(api_prefix, db_tables) {
+   /** @type {Record<string, CApiResult>} */
+   let sp_actions = {}
+   let BaseModel = require('./app/base_model')
+   for (let schema in db_tables) {
+      for (let table of db_tables[schema]) {
+         let obj = BaseModel(schema, table)
+         for (let key in obj) if (typeof obj[key] === 'function') {
+            sp_actions[`${api_prefix}/${schema}/${table}/${key.replace('_', '-')}`] = obj[key]
+         }
+      }
+   }
+   sp_actions[`${api_prefix}/init`] = async () => ({ statusCode: 200, result: db_tables })
+   return sp_actions
 }
