@@ -18,27 +18,7 @@ const HEADERS = {
    'Strict-Transport-Security': 'max-age=0; includeSubdomains; preload',
 }
 
-/**
- * 
- * @param {string} root 
- * @param {string} url 
- * @returns {import('./server').IServerResponse}
- */
-async function staticServer(root, url) {
-   try {
-      const filePath = await findFilePath(root, url)
-      const data = await fs.promises.readFile(filePath);
-      const mimeType = findMimeType(filePath)
-      return {
-         headers: { ...HEADERS, 'Content-Type': mimeType },
-         data,
-         statusCode: 200,
-      }
-   } catch (err) {
-      if (err.code !== 'ENOENT') console.error(err);
-      return null
-   }
-}
+
 
 /** 
  * @param {string} root
@@ -46,7 +26,6 @@ async function staticServer(root, url) {
  */
 async function findFilePath(root, url) {
    let filePath = path.join(root, url);
-   console.log({ url, root });
 
    for (let i = 0; i < 10 && filePath.endsWith('/'); i++) filePath = filePath.slice(0, -1);
    if (filePath.endsWith('/')) throw new Error("Could not remove / from file path")
@@ -68,15 +47,55 @@ async function findFilePath(root, url) {
  */
 function findMimeType(filePath) {
    const fileExt = path.extname(filePath).substring(1);
-   console.log({ fileExt });
    const mimeType = MIME_TYPES[fileExt] || MIME_TYPES.html;
    return mimeType
 }
 
-const indexHtml = sp_assets => async () => ({
-   headers: { 'Content-Type': 'text/html; charset=UTF-8' },
-   statusCode: 200,
-   data: await fs.promises.readFile(path.join(sp_assets, 'index.html'))
-})
+/**
+ * @param {string} root 
+ * @param {string} sp_assets 
+ * @param {string} url 
+ * @returns {Promise<import('./definitions').IServerResponse>}
+ */
+async function IndexHtml(root, sp_name, url) {
+   if (url.startsWith('/' + sp_name)) {
+      let filePath = path.join(root, sp_name, 'index.html');
+      let data = await fs.promises.readFile(filePath)
+      return {
+         headers: { 'Content-Type': 'text/html; charset=UTF-8' },
+         statusCode: 200,
+         data,
+      }
+   }
+   return null
+}
 
-module.exports = { staticServer, indexHtml }
+/**
+ * @param {string} root 
+ * @param {string} url 
+ * @returns {Promise<import('./definitions').IServerResponse>}
+ */
+async function FileServer(root, url) {
+   const filePath = await findFilePath(root, url)
+   const data = await fs.promises.readFile(filePath);
+   const mimeType = findMimeType(filePath)
+   return {
+      headers: { ...HEADERS, 'Content-Type': mimeType },
+      data,
+      statusCode: 200,
+   }
+}
+
+async function ErrorWrapper(func, ...args) {
+   try {
+      return await func(...args)
+   } catch (err) {
+      if (err.code !== 'ENOENT') console.error(err);
+      return null
+   }
+}
+
+module.exports = {
+   spFileServer: (root, url) => ErrorWrapper(FileServer, root, url),
+   spIndexHtml: (root, sp_name, url) => ErrorWrapper(IndexHtml, root, sp_name, url)
+}
