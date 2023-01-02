@@ -1,3 +1,5 @@
+'use strict'
+
 const path = require('node:path');
 const fs = require('node:fs');
 const assert = require('node:assert');
@@ -75,7 +77,7 @@ async function IndexHtml(root, sp_name, url) {
  * @param {string} url 
  * @returns {Promise<import('./definitions').IServerResponse>}
  */
-async function FileServer(root, url) {
+async function FileRouter(root, url) {
    const filePath = await findFilePath(root, url)
    const data = await fs.promises.readFile(filePath);
    const mimeType = findMimeType(filePath)
@@ -86,6 +88,12 @@ async function FileServer(root, url) {
    }
 }
 
+/**
+ * 
+ * @param {any} func 
+ * @param  {...any} args 
+ * @returns {Promise<import('./definitions').IServerResponse>}
+ */
 async function ErrorWrapper(func, ...args) {
    try {
       return await func(...args)
@@ -96,6 +104,6 @@ async function ErrorWrapper(func, ...args) {
 }
 
 module.exports = {
-   spFileServer: (root, url) => ErrorWrapper(FileServer, root, url),
+   spFileRouter: (root, url) => ErrorWrapper(FileRouter, root, url),
    spIndexHtml: (root, sp_name, url) => ErrorWrapper(IndexHtml, root, sp_name, url)
 }

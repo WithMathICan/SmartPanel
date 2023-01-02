@@ -30,7 +30,6 @@ const receiveArgs = async (req) => {
 
 
 /**
- * 
  * @param {Record<string, string[]>} db_tables 
  * @param {Record<string, Function>} actions 
  * @param {number} port 

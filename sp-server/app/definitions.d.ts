@@ -18,3 +18,8 @@ export interface IConfig {
    SP_NAME: string,
    PORT: number,
 }
+
+export interface IRouterResult{
+   handler: (args:any) => Promise<IServerResponse>,
+   urlArgs: any
+}
