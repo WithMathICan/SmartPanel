@@ -1,3 +1,4 @@
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('node:path')
@@ -6,6 +7,7 @@ const webpack = require('webpack')
 const config = require('./config')
 console.log(config);
 let isProd = process.env.NODE_ENV == 'prod'
+console.log(isProd);
 
 const cssLoaders = [
    isProd ? MiniCssExtractPlugin.loader : "vue-style-loader",
@@ -18,12 +20,13 @@ const cssLoaders = [
 
 module.exports = {
    mode: isProd ? "production" : "development",
-   devtool: 'source-map',
+   devtool: isProd ? 'source-map' : 'source-map',
    entry: {
       SmartPanel: './index.js',
    },
    output: {
-      path: __dirname + '/out'
+      path: path.resolve(`../sp-api/assets` + config.SMART_PANEL_PATH),
+      filename: isProd ? "[name]-[hash].js" : "[name].js",
    },
    resolve: {
       extensions: ['.vue', '.js'],
@@ -34,13 +37,14 @@ module.exports = {
          { test: /\.s[ac]ss$/i, use: cssLoaders.concat(["sass-loader"]) },
          { test: /\.css$/, use: cssLoaders },
          {
-            test: /\.m?js$/, exclude: /node_modules/, use: {
+            test: /\.m?js$/, exclude: /node_modules/, 
+            use: ["source-map-loader", {
                loader: "babel-loader",
                options: { 
                   presets: ['@babel/preset-env'],
                   plugins: ["@vue/babel-plugin-jsx"]
                }
-            }
+            }]
          }
       ]
    },
@@ -50,15 +54,16 @@ module.exports = {
          filename: 'index.html',
          template: 'index.html',
          inject: true,
-         publicPath: `/`,
+         publicPath: config.SMART_PANEL_PATH,
       }),
       new webpack.DefinePlugin({
          __VUE_OPTIONS_API__: true,
          __VUE_PROD_DEVTOOLS__: false
       }),
       new MiniCssExtractPlugin({
-         filename: 'style.css'
-      })
+         filename: isProd ? '[name]-[hash].css' : '[namw].css'
+      }),
+      new CleanWebpackPlugin(),
    ],
    devServer: {
       port: 3001,

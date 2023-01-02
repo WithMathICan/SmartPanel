@@ -1,15 +1,23 @@
 'use strict';
 
-const { DB_SCHEMAS, SERVER_PORT, API_FOLDER, SMART_PANEL_API_PREFIX } = require('./config');
+const { DB_SCHEMAS, SERVER_PORT, SMART_PANEL_API_PREFIX, STATIC_SERVER_PORT, SMART_PANEL_PATH } = require('./config');
 const { pool } = require('./app/pg_pool');
 const server = require('./http.js');
+const staticServer = require('./static.js');
 
 (async () => {
    let db_tables = await FindDbTables(DB_SCHEMAS)
    let sp_actions = CreateSmartPanelActions(db_tables)
    console.log(db_tables);
+   staticServer('./assets', STATIC_SERVER_PORT, SMART_PANEL_PATH)
    server(sp_actions, SERVER_PORT)
 })();
+
+process.on('uncaughtException', (a, b) => {
+   console.log({a, b});
+})
+
+
 
 /**
  * @param {string[]} schemas 

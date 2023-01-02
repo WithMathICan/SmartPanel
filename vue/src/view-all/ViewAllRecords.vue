@@ -60,6 +60,7 @@ function clearSelected(deletedIds) {
 }
 
 function init() {
+   console.log('init ViewAllRecords');
    tableKey.value = spTableKey(props.schema, props.table)
    FillBeans(props.schema, props.table)
    FillColsData(props.schema, props.table)
