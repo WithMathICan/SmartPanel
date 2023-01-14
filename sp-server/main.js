@@ -4,6 +4,7 @@ const path = require('node:path');
 const { spFileRouter, spIndexHtml } = require('./app/staticRoter.js');
 const config = require('./app/config.js');
 const { createApiRouter } = require('./app/apiRouter.js');
+const {pool} = require('./app/pg_pool')
 
 process.on('uncaughtException', err => {
    console.error(err);
@@ -26,7 +27,7 @@ const receiveArgs = async (req) => {
 
 (async () => {
 
-   let spApiRouter = await createApiRouter(config.DB_SCHEMAS, `/api/${config.SP_NAME}`)
+   let spApiRouter = await createApiRouter(config.DB_SCHEMAS, `/api/${config.SP_NAME}`, pool)
 
    http.createServer(async (req, res) => {
       /** @type {import('./app/definitions.js').IServerResponse} */

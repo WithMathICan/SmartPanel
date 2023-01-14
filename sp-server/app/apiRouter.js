@@ -4,8 +4,8 @@
 const assert = require('node:assert');
 const { spFindDbTables } = require('./sp-functions');
 
-const headers = {
-   // 'X-XSS-Protection': '1; mode=block',
+const HEADERS = {
+   'X-XSS-Protection': '1; mode=block',
    // 'X-Content-Type-Options': 'nosniff',
    // 'Strict-Transport-Security': 'max-age=31536000; includeSubdomains; preload',
    // 'Access-Control-Allow-Origin': '*',
@@ -17,8 +17,8 @@ const headers = {
 
 
 
-async function createApiRouter(DB_SCHEMAS, api_prefix){
-   let db_tables = await spFindDbTables(DB_SCHEMAS)
+async function createApiRouter(DB_SCHEMAS, api_prefix, pg_pool){
+   let db_tables = await spFindDbTables(DB_SCHEMAS, pg_pool)
 
 
    /**
@@ -38,16 +38,25 @@ async function createApiRouter(DB_SCHEMAS, api_prefix){
     */
    async function apiRouter(url, args){
       if (url === `${api_prefix}/init`){
-         return {
-            data: JSON.stringify({ result: db_tables }),
-            statusCode: 200,
-            headers,
-         }
+         return createResponse(db_tables)
       }
    }
 
    return apiRouter
 }
+
+/**
+ * 
+ * @param {any} result 
+ * @param {number} statusCode 
+ * @param {Record<string, string>} headers 
+ * @returns {import('./definitions').IServerResponse}
+ */
+function createResponse(result, statusCode = 200, headers = HEADERS){
+   return {result, statusCode, headers}
+}
+
+
 
 /**
  * @callback CApiResult

@@ -2,7 +2,7 @@
 
 const { Col } = require('sp-common');
 const { Fk } = require('sp-common')
-const { queryAll } = require('./pg_pool');
+const pg = require('pg')
 const { DB_SETTINGS } = require('./config');
 /** @typedef {import("sp-common").IFk} IFk */
 
@@ -49,16 +49,18 @@ const MY_SQL_FK = `SELECT
 
 
 
+
 /**
  * @param {string} schema 
  * @param {string} table 
+ * @param {pg.PoolClient} pg_client
  * @returns {Promise<Col[]>}
  */
-async function spCreateCols(schema, table) {
+async function spCreateCols(schema, table, pg_client) {
    let db_cols = await queryAll(MY_SQL_COLS, [DB_SETTINGS.database, schema, table])
    let cols = db_cols.map(el => new Col(el))
-   /** @type {IFk[]} */
-   let db_fk = await queryAll(MY_SQL_FK, [schema, table])
+   let {rows} = await pg_client.query(MY_SQL_FK, [schema, table])
+   /** @type {IFk[]} */ let db_fk = rows
 
    for (let fk of db_fk) {
       let col = cols.find(el => el.column_name === fk.column_name)
@@ -75,13 +77,14 @@ const spTableName = (schema, table) => `${schema}.${table}`
 
 /**
  * @param {string[]} schemas 
+ * @param {pg.PoolClient} pg_client
  * @returns {Promise<Record<string, string[]>>}
  */
-async function spFindDbTables(schemas) {
+async function spFindDbTables(schemas, pg_client) {
    const db_tables = {};
    for (let schema of schemas) {
       let sql = "SELECT table_name FROM information_schema.tables WHERE table_schema = $1"
-      let rows = await queryAll(sql, [schema])
+      let {rows} = await pg_client.query(sql, [schema])
       if (rows.length > 0) db_tables[schema] = rows.map(el => el.table_name)
    }
    return db_tables
