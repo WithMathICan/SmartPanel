@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import {Col} from 'common/col'
+import {Col} from 'sp-common'
 import { FillBeans, spBeans, spTableKey } from '../../store';
 import Dropdown from 'primevue/dropdown'
 import { computed } from '@vue/reactivity';

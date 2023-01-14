@@ -1,4 +1,4 @@
-import {Col} from 'common/col'
+import {Col} from 'sp-common'
 
 export interface ISpApi{
    GetColsData(): Promise<Col[]>

@@ -11,7 +11,7 @@ const post = async (url, body = '') => {
    loading.value = true
 
    try {
-      let data = await fetch(url, { method: 'POST', body })
+      let data = await fetch(url, { method: 'POST', body, headers: { 'Accept': 'application/json' }})
       if (!data.ok) {
          let { message } = await data.json()
          throw new Error(message ?? 'Ошибка сервера')

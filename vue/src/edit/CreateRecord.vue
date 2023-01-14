@@ -36,7 +36,7 @@ function init() {
    api[props.schema][props.table].GetColsCreate().then(ColsObtained)
 }
 
-/** @param {import('common/col').Col[]} dataCols */
+/** @param {import('sp-common/col').Col[]} dataCols */
 function ColsObtained(dataCols){
    if (!Array.isArray(dataCols)) return
    cols.value = dataCols

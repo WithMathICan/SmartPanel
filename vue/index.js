@@ -26,7 +26,7 @@ async function start() {
    CreateMenuItems(result)
    CreateApi(result, API_PATH)
    let routes = CreateRoutes(result)
-   const router = createRouter({ history: createWebHistory(SMART_PANEL_PATH), routes })
+   const router = createRouter({ history: createWebHistory(), routes })
    createApp(App).use(PrimeVue).use(ConfirmationService).use(router).mount("#root")
 }
 

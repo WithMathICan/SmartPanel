@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import {Col} from 'common/col'
+import {Col} from 'sp-common'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Calendar from 'primevue/calendar';

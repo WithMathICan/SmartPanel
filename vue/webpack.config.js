@@ -25,7 +25,7 @@ module.exports = {
       SmartPanel: './index.js',
    },
    output: {
-      path: path.resolve(`../sp-api/assets` + config.SMART_PANEL_PATH),
+      // path: path.resolve(`../sp-server/assets` + config.SMART_PANEL_PATH),
       filename: isProd ? "[name]-[hash].js" : "[name].js",
    },
    resolve: {
@@ -37,10 +37,10 @@ module.exports = {
          { test: /\.s[ac]ss$/i, use: cssLoaders.concat(["sass-loader"]) },
          { test: /\.css$/, use: cssLoaders },
          {
-            test: /\.m?js$/, exclude: /node_modules/, 
+            test: /\.m?js$/, exclude: /node_modules/,
             use: ["source-map-loader", {
                loader: "babel-loader",
-               options: { 
+               options: {
                   presets: ['@babel/preset-env'],
                   plugins: ["@vue/babel-plugin-jsx"]
                }
@@ -54,14 +54,14 @@ module.exports = {
          filename: 'index.html',
          template: 'index.html',
          inject: true,
-         publicPath: config.SMART_PANEL_PATH,
+         publicPath: '/',
       }),
       new webpack.DefinePlugin({
          __VUE_OPTIONS_API__: true,
          __VUE_PROD_DEVTOOLS__: false
       }),
       new MiniCssExtractPlugin({
-         filename: isProd ? '[name]-[hash].css' : '[namw].css'
+         filename: isProd ? '[name]-[hash].css' : '[name].css'
       }),
       new CleanWebpackPlugin(),
    ],
@@ -69,5 +69,17 @@ module.exports = {
       port: 3001,
       hot: false,
       historyApiFallback: true,
+      proxy: {
+         '/api': {
+            target: 'http://localhost:3000',
+         },
+      },
+      // client:{
+      //    reconnect: true,
+      // },
+      // static:{
+      //    // directory: path.resolve(`../sp-server/assets` + config.SMART_PANEL_PATH),
+      //    publicPath: config.SMART_PANEL_PATH
+      // }
    }
 }

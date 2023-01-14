@@ -4,7 +4,7 @@
 
 <script>
 import { defineComponent, onMounted } from 'vue';
-import {Col} from 'common/col'
+import {Col} from 'sp-common'
 
 export default defineComponent({
    props: ['bean', 'col'],

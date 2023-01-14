@@ -4,8 +4,8 @@
 const assert = require('node:assert');
 const { spFindDbTables } = require('./sp-functions');
 
-const HEADERS = {
-   'X-XSS-Protection': '1; mode=block',
+const headers = {
+   // 'X-XSS-Protection': '1; mode=block',
    // 'X-Content-Type-Options': 'nosniff',
    // 'Strict-Transport-Security': 'max-age=31536000; includeSubdomains; preload',
    // 'Access-Control-Allow-Origin': '*',
@@ -14,32 +14,36 @@ const HEADERS = {
    'Content-Type': 'application/json; charset=UTF-8',
 };
 
-const receiveArgs = async (req) => {
-   try {
-      const buffers = [];
-      for await (const chunk of req) buffers.push(chunk);
-      const data = Buffer.concat(buffers).toString();
-      if (!data) return {}
-      let parsedData = JSON.parse(data);
-      assert(typeof parsedData === 'object', "ParsedData shold be an object")
-      return parsedData
-   } catch (e) {
-      console.error(e);
-      return {}
-   }
-};
 
 
-async function createApiRouter(DB_SCHEMAS){
+
+async function createApiRouter(DB_SCHEMAS, api_prefix){
    let db_tables = await spFindDbTables(DB_SCHEMAS)
 
 
    /**
     * @param {string} url 
-    * @returns {import('./definitions').IRouterResult}
+    * @returns {Promise<import('./definitions').IRouterResult>}
     */
-   async function apiRouter(url){
+   async function apiRouter1(url){
+      if (url === `${api_prefix}/init`) return { handler: async () => ({ statusCode: 200, data: JSON.stringify(db_tables), headers }) }
+      
+      return null
+   }
 
+   /**
+    * @param {string} url 
+    * @param {any} args
+    * @returns {Promise<import('./definitions').IServerResponse>}
+    */
+   async function apiRouter(url, args){
+      if (url === `${api_prefix}/init`){
+         return {
+            data: JSON.stringify({ result: db_tables }),
+            statusCode: 200,
+            headers,
+         }
+      }
    }
 
    return apiRouter
@@ -71,3 +75,6 @@ function CreateSmartPanelActions(api_prefix, db_tables) {
    sp_actions[`${api_prefix}/init`] = async () => ({ statusCode: 200, result: db_tables })
    return sp_actions
 }
+
+
+module.exports = {createApiRouter}

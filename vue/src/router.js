@@ -3,6 +3,8 @@ import ViewAllRecords from './view-all/ViewAllRecords.vue'
 import EditRecord from './edit/EditRecord.vue'
 import CopyRecord from './edit/CopyRecord.vue'
 import CreateRecord from './edit/CreateRecord.vue'
+import Main from './Main.vue'
+import NotFound from './NotFound.vue'
 
 export function CreateRoutes(tables) {
    /**@type {RouteRecordRaw[]} */
@@ -37,11 +39,11 @@ export function CreateRoutes(tables) {
    routes.push({
       path: `/`,
       name: 'main',
-      component: <h1>Главная страница</h1>
+      component: Main,
    })
    routes.push({
       path: '/:catchAll(.*)*',
-      component: <h1>Страница не найдена</h1>,
+      component: NotFound,
    })
    console.log({routes});
    return routes
