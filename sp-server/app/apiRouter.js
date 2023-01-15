@@ -25,11 +25,12 @@ async function createApiRouter(DB_SCHEMAS, api_prefix, pg_pool){
     * @returns {Promise<import('./definitions').IServerResponse>}
     */
    async function apiRouter(url, args){
-      if (url === `${api_prefix}/init`) return createResponse(db_tables)
+      if (url === `${api_prefix}/init`) return createResponse({result: db_tables})
 
       let handler = sp_actions[url]
       if (handler){
          let {result, message, statusCode} = await handler(args)
+         // console.log(result);
          return createResponse({result, message}, statusCode)
       }
    }
@@ -44,8 +45,8 @@ async function createApiRouter(DB_SCHEMAS, api_prefix, pg_pool){
  * @param {Record<string, string>} headers 
  * @returns {import('./definitions').IServerResponse}
  */
-function createResponse(result, statusCode = 200, headers = HEADERS){
-   return {data: JSON.stringify({result}), statusCode, headers}
+function createResponse(data, statusCode = 200, headers = HEADERS){
+   return {data: JSON.stringify(data), statusCode, headers}
 }
 
 /**

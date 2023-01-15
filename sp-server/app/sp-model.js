@@ -35,6 +35,7 @@ function SpModel(schema, table, pg_client){
       async cols(){
          let result = await spf.spCreateCols(schema, table, pg_client)
          if (result.length === 0) return { statusCode: 404, message: 'Данная таблица не существует' }
+         result = result.filter(el => el.column_name !== 'id')
          return { statusCode: 200, result }
       },
 

@@ -18,6 +18,7 @@ const post = async (url, body = '') => {
       } else {
          let { result, message } = await data.json()
          if (message) showMessage(message, 5000, 'success')
+         // console.log(result);
          return result
       }
    } catch (e) {

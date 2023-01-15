@@ -1,5 +1,6 @@
 <template>
-   <h1 class="text-700 mb-2">{{ table }}</h1>
+   <h1 class="text-700 mb-2">{{ table }} </h1>
+   <span v-if="selectedBeans.length">{{ selectedBeans.length }} выбрано</span>
    <div v-if="tableKey && Array.isArray(spBeans[tableKey])">
       <div class="mt-2 mb-2">
          <router-link class="link p-button p-button-warning" :to="{ name: 'new', params: { schema, table } }">Создать</router-link>
