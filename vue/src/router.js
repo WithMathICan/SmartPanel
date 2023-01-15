@@ -45,6 +45,6 @@ export function CreateRoutes(tables) {
       path: '/:catchAll(.*)*',
       component: NotFound,
    })
-   console.log({routes});
+   // console.log({routes});
    return routes
 }

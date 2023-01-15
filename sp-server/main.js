@@ -27,7 +27,7 @@ const receiveArgs = async (req) => {
 };
 
 (async () => {
-
+   // console.log({pool});
    let spApiRouter = await createApiRouter(config.DB_SCHEMAS, `/api/${config.SP_NAME}`, pool)
 
    http.createServer(async (req, res) => {

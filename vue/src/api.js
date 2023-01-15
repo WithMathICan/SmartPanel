@@ -38,10 +38,10 @@ export function CreateApi(tables, API_PATH) {
       api[schema] = {}
       for (let table of tables[schema]) {
          api[schema][table] = {}
-         api[schema][table].GetColsData = () => post(`${API_PATH}/${schema}/${table}/cols-data`)
-         api[schema][table].GetColsCreate = () => post(`${API_PATH}/${schema}/${table}/cols-create`)
-         api[schema][table].GetColsEdit = () => post(`${API_PATH}/${schema}/${table}/cols-edit`)
-         api[schema][table].GetColsCopy = () => post(`${API_PATH}/${schema}/${table}/cols-copy`)
+         api[schema][table].GetColsData = () => post(`${API_PATH}/${schema}/${table}/cols`)
+         api[schema][table].GetColsCreate = () => post(`${API_PATH}/${schema}/${table}/cols`)
+         api[schema][table].GetColsEdit = () => post(`${API_PATH}/${schema}/${table}/cols`)
+         api[schema][table].GetColsCopy = () => post(`${API_PATH}/${schema}/${table}/cols`)
          api[schema][table].GetBeans = () => post(`${API_PATH}/${schema}/${table}/beans`)
          api[schema][table].GetBean = (id) => post(`${API_PATH}/${schema}/${table}/bean`, { id })
          api[schema][table].SaveBean = (bean) => post(`${API_PATH}/${schema}/${table}/save`, { bean })

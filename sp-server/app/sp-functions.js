@@ -57,8 +57,8 @@ const MY_SQL_FK = `SELECT
  * @returns {Promise<Col[]>}
  */
 async function spCreateCols(schema, table, pg_client) {
-   let db_cols = await queryAll(MY_SQL_COLS, [DB_SETTINGS.database, schema, table])
-   let cols = db_cols.map(el => new Col(el))
+   let db_cols = await pg_client.query(MY_SQL_COLS, [DB_SETTINGS.database, schema, table])
+   let cols = db_cols.rows.map(el => new Col(el))
    let {rows} = await pg_client.query(MY_SQL_FK, [schema, table])
    /** @type {IFk[]} */ let db_fk = rows
 
