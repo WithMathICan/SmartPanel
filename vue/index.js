@@ -13,21 +13,26 @@ import App from './src/App.vue';
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import { CreateMenuItems } from './src/menu-items';
-import { API_PATH, SMART_PANEL_PATH } from './config'
+import { API_PATH } from './config'
 import { createRouter, createWebHistory } from 'vue-router'
 import { CreateRoutes } from './src/router';
 import { CreateApi } from './src/api';
 
 async function start() {
-   let data = await fetch(`${API_PATH}/init`, {method: 'POST', body: '{}'})
-   if (!data.ok) return;
-   let {result} = await data.json()
-   if (!result) return console.log("Ошибка при получении данных с сервера");
-   CreateMenuItems(result)
-   CreateApi(result, API_PATH)
-   let routes = CreateRoutes(result)
-   const router = createRouter({ history: createWebHistory(), routes })
-   createApp(App).use(PrimeVue).use(ConfirmationService).use(router).mount("#root")
+   try{
+      let data = await fetch(`${API_PATH}/init`, {method: 'POST', body: '{}'})
+      if (!data.ok) return;
+      console.log(data);
+      let {result} = await data.json()
+      if (!result) return console.log("Ошибка при получении данных с сервера");
+      CreateMenuItems(result)
+      CreateApi(result, API_PATH)
+      let routes = CreateRoutes(result)
+      const router = createRouter({ history: createWebHistory(), routes })
+      createApp(App).use(PrimeVue).use(ConfirmationService).use(router).mount("#root")
+   } catch (e){
+      console.log(e);
+   }
 }
 
 start()

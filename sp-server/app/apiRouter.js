@@ -53,7 +53,7 @@ async function createApiRouter(DB_SCHEMAS, api_prefix, pg_pool){
  * @returns {import('./definitions').IServerResponse}
  */
 function createResponse(result, statusCode = 200, headers = HEADERS){
-   return {result, statusCode, headers}
+   return {data: JSON.stringify({result}), statusCode, headers}
 }
 
 

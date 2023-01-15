@@ -1,0 +1,3 @@
+sudo tlp start
+sudo gedit /etc/tlp.conf
+
