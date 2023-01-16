@@ -3,7 +3,7 @@ const path = require('node:path');
 const assert = require('node:assert')
 
 const { spFileRouter, spIndexHtml } = require('./app/staticRoter.js');
-const config = require('./app/config.js');
+const config = require('./config.js');
 const { createApiRouter } = require('./app/apiRouter.js');
 const {pool} = require('./app/pg_pool')
 

@@ -3,7 +3,7 @@
 const { Col } = require('sp-common');
 const { Fk } = require('sp-common')
 const pg = require('pg')
-const { DB_SETTINGS } = require('./config');
+const { DB_SETTINGS } = require('../config');
 /** @typedef {import("sp-common").IFk} IFk */
 
 const MY_SQL_COLS = `SELECT * from information_schema.columns 
