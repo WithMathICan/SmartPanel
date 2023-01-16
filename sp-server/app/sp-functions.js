@@ -81,10 +81,12 @@ const spTableName = (schema, table) => `${schema}.${table}`
  * @returns {Promise<Record<string, string[]>>}
  */
 async function spFindDbTables(schemas, pg_client) {
+   // console.log({schemas});
    const db_tables = {};
    for (let schema of schemas) {
       let sql = "SELECT table_name FROM information_schema.tables WHERE table_schema = $1"
       let {rows} = await pg_client.query(sql, [schema])
+      // console.log({schema, rows});
       if (rows.length > 0) db_tables[schema] = rows.map(el => el.table_name)
    }
    return db_tables
