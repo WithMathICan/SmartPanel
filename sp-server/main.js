@@ -49,7 +49,6 @@ const receiveArgs = async (req) => {
       
       console.info({url, code: resData?.statusCode});
       if (resData){
-         // console.log({resData});
          res.writeHead(resData.statusCode, resData.headers)
          res.end(resData.data)
       }

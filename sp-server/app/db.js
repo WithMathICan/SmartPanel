@@ -4,7 +4,6 @@ const assert = require('node:assert')
 const pg = require('pg')
 
 /**
- * 
  * @param {string} table 
  * @param {pg.PoolClient} pg_client 
  * @returns 
