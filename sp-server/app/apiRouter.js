@@ -5,6 +5,8 @@ const assert = require('node:assert');
 const { spFindDbTables } = require('./sp-functions');
 const {SpController} = require('./sp-controller')
 
+const spf = require('./sp-functions')
+
 const HEADERS = {
    'X-XSS-Protection': '1; mode=block',
    // 'X-Content-Type-Options': 'nosniff',
