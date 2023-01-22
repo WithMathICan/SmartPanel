@@ -1,11 +1,8 @@
 'use strict';
 
-const assert = require('node:assert')
-const pg = require('pg')
-
 /**
  * @param {string} table 
- * @param {pg.PoolClient} pg_client 
+ * @param {import('pg').PoolClient} pg_client
  * @returns 
  */
 module.exports = (table, pg_client) => ({
@@ -53,7 +50,6 @@ module.exports = (table, pg_client) => ({
    },
 
    async update(id, { ...record }) {
-      if (!id) throw new Error("Id should specified")
       let delta = []
       let i = 1
       let args = []
@@ -74,7 +70,6 @@ module.exports = (table, pg_client) => ({
    // },
 
    async removeMany(ids) {
-      assert(Array.isArray(ids), 'Данные для удаления не корректны.')
       let nums = ids.map((v, i) => `$${i + 1}`);
       let sql = `DELETE FROM ${table} WHERE id in (${nums.join(',')}) returning id`
       let {rows} = await pg_client.query(sql, ids)

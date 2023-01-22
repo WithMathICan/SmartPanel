@@ -24,4 +24,4 @@ export interface IRouterResult{
    urlArgs: any
 }
 
-export type FRouter = (method: string, url: string) => Promise<IRouterResult>
+export type FRouter = (method: string, url: string) => Promise<IServerResponse | null>

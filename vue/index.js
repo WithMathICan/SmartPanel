@@ -20,7 +20,7 @@ import { CreateApi } from './src/api';
 
 async function start() {
    try{
-      let data = await fetch(`${API_PATH}/init`, {method: 'POST', body: '{}'})
+      let data = await fetch(`${API_PATH}/init`, {method: 'POST', body: '{}', headers: { 'Accept': 'application/json' }})
       if (!data.ok) return;
       // console.log(data);
       let {result} = await data.json()

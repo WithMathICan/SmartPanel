@@ -1,24 +1,7 @@
 'use strict'
 
-const db = require("./db.js")
+const {createCRUD} = require("./crud.js")
 const spf = require('./sp-functions.js')
-
-// class SpModel{
-//    constructor(schema, table, pg_client){
-//       this.schema = schema
-//       this.table = table
-//       this.pg_client = pg_client
-//       this.table_name = `${schema}.${table}`
-//       this.crud = db(this.table_name, pg_client)
-//    }
-
-//    async cols_data() {
-//       let result = await spf.spCreateCols(this.schema, this.table, this.pg_client)
-//       result = result.filter(el => el.column_name !== 'id')
-//       if (result.length === 0) return { statusCode: 404, message: 'Данная таблица не существует' }
-//       return { statusCode: 200, result }
-//    }
-// }
 
 /**
  * @param {string} schema 
@@ -26,9 +9,9 @@ const spf = require('./sp-functions.js')
  * @param {import('pg').PoolClient} pg_client
  * @returns {import("sp-common/main").ITableApi}
  */
-function SpModel(schema, table, pg_client){
+function createSpModel(schema, table, pg_client){
    let table_name = `${schema}.${table}`
-   let crud = db(table_name, pg_client)
+   let crud = createCRUD(schema, table, pg_client)
 
    return {
       async cols(){
@@ -64,4 +47,4 @@ function SpModel(schema, table, pg_client){
    }
 }
 
-module.exports = {SpModel}
+module.exports = {createSpModel}

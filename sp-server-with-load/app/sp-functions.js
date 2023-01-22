@@ -1,5 +1,8 @@
 'use strict'
 
+const { DB_SETTINGS } = require('../config.js');
+const {Col, Fk} = require('sp-common')
+
 const MY_SQL_COLS = `SELECT * from information_schema.columns 
                      where table_catalog = $1 and table_schema = $2 and table_name = $3`;
 
@@ -38,6 +41,46 @@ const MY_SQL_FK = `SELECT
    ON ccu.constraint_name = tc.constraint_name
    WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_schema=$1 AND tc.table_name=$2`
 
+/**
+ * @param {string} schema 
+ * @param {string} table 
+ * @param {import('pg').PoolClient} pg_client
+ * @returns {Promise<Col[]>}
+ */
+async function spCreateCols(schema, table, pg_client) {
+   let db_cols = await pg_client.query(MY_SQL_COLS, [DB_SETTINGS.database, schema, table])
+   /** @type {Col[]} */
+   let cols = db_cols.rows.map(el => new Col(el))
+   let {rows} = await pg_client.query(MY_SQL_FK, [schema, table])
+   /** @type {import('sp-common').IFk[]} */ let db_fk = rows
 
+   for (let fk of db_fk) {
+      let col = cols.find(el => el.column_name === fk.column_name)
+      if (col) {
+         col.data_type = 'fk'
+         col.fk = new Fk(fk, 'name')
+      }
+   }
 
-module.exports = {}
+   return cols
+}
+
+/**
+ * @param {string[]} schemas 
+ * @param {import('pg').Pool} pg_client
+ * @returns {Promise<Record<string, string[]>>}
+ */
+async function spFindDbTables(schemas, pg_client) {
+   // console.log({schemas});
+   /** @type {Record<string, string[]>} */
+   const db_tables = {};
+   for (let schema of schemas) {
+      let sql = "SELECT table_name FROM information_schema.tables WHERE table_schema = $1"
+      let {rows} = await pg_client.query(sql, [schema])
+      // console.log({schema, rows});
+      if (rows.length > 0) db_tables[schema] = rows.map(el => el.table_name)
+   }
+   return db_tables
+}
+
+module.exports = {spCreateCols, spFindDbTables}
