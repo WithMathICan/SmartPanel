@@ -17,7 +17,7 @@ function createSpModel(schema, table, createCrud) {
       /** @type {import("./sp-model").ISpModel} */
       let SpModel = {
          async cols(){
-            let result = await spf.spCreateCols(schema, table, PG_DATABASE, pg_client)
+            let result = await sp.func.spCreateCols(schema, table, sp.PG_DATABASE, pg_client)
             result = result.filter(el => el.column_name !== 'id')
             return result
          },
