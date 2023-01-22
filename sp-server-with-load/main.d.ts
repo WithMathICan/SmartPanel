@@ -38,14 +38,6 @@ export interface IApiResult<T>{
    result?: T
 }
 
-export interface ITableApi{
-   cols() : Promise<IApiResult<Col[]>>
-   beans(args: {fields?: string[]}) : Promise<IApiResult<any[]>>
-   bean(args: {id: string, fields?: string[]}) : Promise<IApiResult<any>>
-   save(args: {bean: any}) : Promise<IApiResult<any>>
-   remove(args: {ids: string[]}) : Promise<IApiResult<string[]>>
-}
-
 
 export class Col{
    table_catalog: string
@@ -60,6 +52,14 @@ export class Col{
    fk?: Fk
 
    constructor(col_data: DbCol)
+}
+
+export interface ITableApi{
+   cols() : Promise<IApiResult<Col[]>>
+   beans(args: {fields?: string[]}) : Promise<IApiResult<any[]>>
+   bean(args: {id: string, fields?: string[]}) : Promise<IApiResult<any>>
+   save(args: {bean: any}) : Promise<IApiResult<any>>
+   remove(args: {ids: string[]}) : Promise<IApiResult<string[]>>
 }
 
 

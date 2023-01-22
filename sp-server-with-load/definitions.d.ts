@@ -1,4 +1,4 @@
-import {IApiResult} from 'sp-common/main'
+import {IApiResult} from './main'
 import {PoolClient} from 'pg'
 
 export interface IServerResponse {
@@ -28,6 +28,6 @@ export interface IConfig {
 
 export type ApiHandler = (args:any) => Promise<IApiResult<any>>
 export type RouteHandler = (args:any) => Promise<IServerResponse>
-export type TableApi = (pg_client: PoolClient) => IApiResult
+export type TableApi = (pg_client: PoolClient) => IApiResult<any>
 export type FRouter = (method: string, url: string) => Promise<IServerResponse | null>
 export type ApiRouter = (method: string, url: string) => Promise<RouteHandler | null>

@@ -54,7 +54,7 @@ async function createSpModelRouter(DB_SCHEMAS, api_prefix, pg_pool){
  * @returns {Record<string, import('sp-common/main').IApiResult<any>>}
  */
 function findModels(db_tables){
-   /** @type {Record<string, import('sp-common/main').IApiResult<any>>}} */
+   /** @type {Record<string, import('sp-common/main').IApiResult<any>>} */
    let models = {}
    let modelSanbox = Object.freeze({createSpModel})
 
@@ -64,6 +64,13 @@ function findModels(db_tables){
       }
    }
    return models;
+}
+
+/**
+ * @param {Record<string, import('sp-common/main').IApiResult<any>>} models 
+ */
+function findControllers(models){
+
 }
 
 
