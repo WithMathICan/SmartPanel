@@ -30,7 +30,8 @@ pool.query("SELECT 1+1").then(async () => {
       let resData = await staticRoter(method, url)
       if (!resData) resData = await indexHtmlRouter(method, url)
       if (!resData) {
-         resData = await spModelRouter(method, url)
+         let handler = await spModelRouter(method, url)
+         if (handler) resData = await handler({...args})
       }
 
       let resIsJson = req.headers['accept'] === 'application/json'

@@ -4,12 +4,22 @@ const {createCRUD} = require("./crud.js")
 const spf = require('./sp-functions.js')
 
 /**
+ * 
+ * @param {string} schema 
+ * @param {string} table 
+ * @returns {import('../definitions').TableApi}
+ */
+function createSpModel(schema, table) {
+   return pg_client => generateSpModel(schema, table, pg_client)
+}
+
+/**
  * @param {string} schema 
  * @param {string} table 
  * @param {import('pg').PoolClient} pg_client
  * @returns {import("sp-common/main").ITableApi}
  */
-function createSpModel(schema, table, pg_client){
+function generateSpModel(schema, table, pg_client){
    let table_name = `${schema}.${table}`
    let crud = createCRUD(schema, table, pg_client)
 

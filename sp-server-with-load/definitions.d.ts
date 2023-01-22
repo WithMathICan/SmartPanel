@@ -1,6 +1,9 @@
+import {IApiResult} from 'sp-common/main'
+import {PoolClient} from 'pg'
+
 export interface IServerResponse {
    headers: Record<string, string>
-   data: any
+   data: {message: string, result: any}
    statusCode: number
 }
 
@@ -19,9 +22,12 @@ export interface IConfig {
    PORT: number,
 }
 
-export interface IRouterResult{
-   handler: (args:any) => Promise<IServerResponse>,
-   urlArgs: any
-}
+// export interface IRouterResult{
+//    handler: (args:any) => Promise<IServerResponse>,
+// }
 
+export type ApiHandler = (args:any) => Promise<IApiResult<any>>
+export type RouteHandler = (args:any) => Promise<IServerResponse>
+export type TableApi = (pg_client: PoolClient) => IApiResult
 export type FRouter = (method: string, url: string) => Promise<IServerResponse | null>
+export type ApiRouter = (method: string, url: string) => Promise<RouteHandler | null>
