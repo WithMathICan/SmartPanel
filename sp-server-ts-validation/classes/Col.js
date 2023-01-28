@@ -1,3 +1,5 @@
+'use strict'
+
 const { Fk } = require('./Fk')
 
 class Col{

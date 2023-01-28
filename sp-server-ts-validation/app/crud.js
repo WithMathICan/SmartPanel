@@ -1,3 +1,6 @@
+'use strict'
+
+
 /** 
  * @type {import("./crud").FCreateCRUD} 
  * @param {string} schema 

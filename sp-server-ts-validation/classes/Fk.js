@@ -1,4 +1,6 @@
-export class Fk {
+'use strict'
+
+class Fk {
    foreign_table_schema = '';
    foreign_table_name = '';
    foreign_column_name = '';

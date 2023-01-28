@@ -40,6 +40,8 @@ JOIN information_schema.constraint_column_usage AS ccu
 ON ccu.constraint_name = tc.constraint_name
 WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_schema=$1 AND tc.table_name=$2`
 
+'use strict'
+
 /**
 * @param {string} schema 
 * @param {string} table 
