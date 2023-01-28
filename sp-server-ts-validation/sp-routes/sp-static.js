@@ -54,9 +54,11 @@ function findMimeType(filePath) {
 
 /** 
  * @param {string} publicRoot 
+ * @param {import('app/sp-logger').SpLogger} console
  * @returns {import('./router').FStaticHandler}
 */
-function createStaticHandler(publicRoot) {
+function createStaticHandler(publicRoot, console) {
+   throw new Error('test')
    /** @type {import('./router').FStaticHandler} */
    async function handler(url){
       try {
@@ -69,7 +71,7 @@ function createStaticHandler(publicRoot) {
             statusCode: 200,
          }
       } 
-      catch (err) {
+      catch (/** @type {any} */ err) {
          if (err && typeof err === 'object' && 'code' in err){
             if (err['code'] !== 'ENOENT') console.error(err);
          }

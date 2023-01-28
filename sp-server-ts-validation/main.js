@@ -6,6 +6,9 @@ const http = require('node:http');
 const path = require('node:path');
 const { config } = require('./config.js');
 const { createStaticHandler, createIndexHtmlHandler } = require('./sp-routes/sp-static.js');
+const { SpLogger } = require('./app/sp-logger.js');
+
+let console = new SpLogger(__dirname)
 
 process.on('uncaughtException', err => {
    console.log(err);
@@ -13,9 +16,10 @@ process.on('uncaughtException', err => {
 
 const pool = new Pool(config.DB_SETTINGS);
 
+
 pool.query("SELECT 1+1").then(async () => {
    let public_root = path.resolve('./public')
-   let staticHandler = createStaticHandler(public_root)
+   let staticHandler = createStaticHandler(public_root, console)
    let indexHtmlHandler = createIndexHtmlHandler(public_root, config.SP_NAME)
 
    http.createServer(async (req, res) => {
@@ -49,6 +53,8 @@ pool.query("SELECT 1+1").then(async () => {
       }
    }).listen(config.PORT)
    console.log("Server started on port ", config.PORT);
+}).catch(e =>{
+   console.error(e)
 })
 
 /**
@@ -64,7 +70,7 @@ async function receiveArgs(req) {
       let parsedData = JSON.parse(data);
       assert(typeof parsedData === 'object', "ParsedData shold be an object")
       return parsedData
-   } catch (e) {
+   } catch (/** @type {any} */ e) {
       console.error(e);
       return {}
    }
