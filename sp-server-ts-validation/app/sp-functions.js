@@ -1,5 +1,5 @@
-const { Col } = require('classes/Col');
-const { Fk } = require('classes/Fk');
+const { Col } = require('../classes/Col');
+const { Fk } = require('../classes/Fk');
 
 
 const MY_SQL_COLS = `SELECT * from information_schema.columns 

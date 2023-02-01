@@ -58,7 +58,6 @@ function findMimeType(filePath) {
  * @returns {import('./router').FStaticHandler}
 */
 function createStaticHandler(publicRoot, console) {
-   throw new Error('test')
    /** @type {import('./router').FStaticHandler} */
    async function handler(url){
       try {

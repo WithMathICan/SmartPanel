@@ -1,12 +1,12 @@
-'use strict'
+({ 
 
 /**
  * @type {import('./sp-controller').FCreateSpController}
  * @param {string} schema 
  * @param {string} table 
  * @param {import('pg').Pool} pool 
- */
-function createSpController(schema, table, pool) {
+ */   
+createSpController: (schema, table, pool) => {
    let table_name = `${schema}.${table}`;
    let fModel = sp.models[table_name]
    if (!fModel) throw new Error('Model not found')
@@ -52,3 +52,5 @@ function createSpController(schema, table, pool) {
 
    return api
 }
+
+})

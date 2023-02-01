@@ -1,5 +1,5 @@
 import { Col } from 'classes/Col'
-import { DbRecord, FCreateCRUD } from './crud'
+import { DbRecord } from './crud'
 import {PoolClient, Pool} from 'pg'
 
 export interface ISpModel {
@@ -12,5 +12,5 @@ export interface ISpModel {
 }
 
 export type FSpModel = (pg_client: PoolClient | Pool) => ISpModel;
-export type FCreateSpModel = (schema: string, table: string, createCrud: FCreateCRUD) => FSpModel
-export function createSpModel(schema: string, table: string, createCrud: FCreateCRUD) : FSpModel
+export type FCreateSpModel = (schema: string, table: string) => FSpModel
+export function createSpModel(schema: string, table: string) : FSpModel

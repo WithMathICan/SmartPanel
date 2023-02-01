@@ -1,10 +1,21 @@
-import { FSpModel, ISpModel } from 'app/sp-model'
+import { FSpModel, ISpModel } from './app/sp-model'
 import * as spFunctions from './app/sp-functions'
+import { FCreateCRUD } from './app/crud'
+
+type TSpFunc = typeof spFunctions;
 
 export global {
    namespace sp{
-      const func: typeof spFunctions
+      const func: TSpFunc
       const PG_DATABASE: string
+      const createCRUD: FCreateCRUD
       const models: Record<string, FSpModel>
    }
 }
+
+// export interface ISp{
+//    func: spFunctions
+//    PG_DATABASE: string
+//    createCRUD: FCreateCRUD
+//    models: Record<string, FSpModel>
+// }

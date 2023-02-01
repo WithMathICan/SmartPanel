@@ -4,29 +4,33 @@ const {Pool} = require('pg');
 const assert = require('node:assert')
 const http = require('node:http');
 const path = require('node:path');
+
 const { config } = require('./config.js');
 const { createStaticHandler, createIndexHtmlHandler } = require('./sp-routes/sp-static.js');
-const { SpLogger } = require('./app/sp-logger.js');
-
-let console = new SpLogger(__dirname)
+const { logger } = require('./app/sp-logger.js');
+const func = require('./app/sp-functions');
+const { createApiControllers } = require('./sp-routes/sp-api.js');
 
 process.on('uncaughtException', err => {
-   console.log(err);
+   logger.log(err);
 })
 
 const pool = new Pool(config.DB_SETTINGS);
 
-
 pool.query("SELECT 1+1").then(async () => {
    let public_root = path.resolve('./public')
-   let staticHandler = createStaticHandler(public_root, console)
+   let staticHandler = createStaticHandler(public_root, logger)
    let indexHtmlHandler = createIndexHtmlHandler(public_root, config.SP_NAME)
+   let db_tables = await func.spFindDbTables(config.DB_SCHEMAS, pool)
+   let controllers = createApiControllers(db_tables, pool)
+
+   logger.log({controllers});
 
    http.createServer(async (req, res) => {
       let url = req.url || '/'
       let method = req.method?.toUpperCase() || 'GET'
       let args = method === 'POST' ? await receiveArgs(req) : {}
-      console.log({method, url});
+      logger.log({method, url});
 
       /** @type {import('sp-routes/router.js').IServerResponse<any> | null} */
       let resData = null 
@@ -40,7 +44,7 @@ pool.query("SELECT 1+1").then(async () => {
       // }
 
       let resIsJson = req.headers['accept'] === 'application/json'
-      // console.log({resIsJson});
+      // logger.log({resIsJson});
       if (resData){
          res.writeHead(resData.statusCode, resData.headers)
          if (resIsJson) res.end(JSON.stringify(resData.data))
@@ -52,9 +56,9 @@ pool.query("SELECT 1+1").then(async () => {
          else res.end('404, Not Found');
       }
    }).listen(config.PORT)
-   console.log("Server started on port ", config.PORT);
+   logger.log("Server started on port ", config.PORT);
 }).catch(e =>{
-   console.error(e)
+   logger.error(e)
 })
 
 /**
@@ -71,7 +75,7 @@ async function receiveArgs(req) {
       assert(typeof parsedData === 'object', "ParsedData shold be an object")
       return parsedData
    } catch (/** @type {any} */ e) {
-      console.error(e);
+      logger.error(e);
       return {}
    }
 }

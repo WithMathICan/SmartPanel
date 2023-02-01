@@ -49,4 +49,5 @@ class SpLogger{
    }   
 }
 
-module.exports = {SpLogger}
+const logger = new SpLogger(path.resolve('.'))
+module.exports = {logger}
