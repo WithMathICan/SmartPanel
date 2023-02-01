@@ -19,8 +19,9 @@ const HEADERS = {
    'Content-Type': 'application/json; charset=UTF-8',
 };
 
-function readSpModel() {
-   let sandbox = Object.freeze({ console: logger, sp: { createCRUD, func } })
+/** @param {string} PG_DATABASE */
+function readSpModel(PG_DATABASE) {
+   let sandbox = Object.freeze({ console: logger, sp: { createCRUD, func, PG_DATABASE } })
    let { createSpModel } = load(modelSrc, sandbox)
    return createSpModel
 }
@@ -33,13 +34,14 @@ function readSpController(models) {
 }
 
 /**
+ * @param {string} PG_DATABASE
  * @param {Record<string, string[]>} db_tables 
  * @returns {Record<string, import("app/sp-model").FSpModel>}
  */
-function createApiModels(db_tables) {
+function createApiModels(PG_DATABASE, db_tables) {
    /** @type {Record<string, import("app/sp-model").FSpModel>} */
    let models = {}
-   let createSpModel = readSpModel()
+   let createSpModel = readSpModel(PG_DATABASE)
    let sandbox = Object.freeze({ createSpModel, console: logger, sp: { func } })
    for (let schema in db_tables) {
       for (let table of db_tables[schema]) {
@@ -51,14 +53,15 @@ function createApiModels(db_tables) {
 }
 
 /**
+ * @param {string} PG_DATABASE
  * @param {Record<string, string[]>} db_tables 
  * @param {import('pg').Pool} pool 
  * @returns {Record<string, import("app/sp-controller").ITableApi>}
  */
-function createApiControllers(db_tables, pool) {
+function createApiControllers(PG_DATABASE, db_tables, pool) {
    /** @type {Record<string, import("app/sp-controller").ITableApi>} */
    let controllers = {}
-   let models = createApiModels(db_tables)
+   let models = createApiModels(PG_DATABASE, db_tables)
    let createSpController = readSpController(models)
 
    let sandbox = Object.freeze({ createSpController, console: logger, pool, sp: { func } })
@@ -75,14 +78,15 @@ function createApiControllers(db_tables, pool) {
 const camelToUrlCase = str => str.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
 
 /**
+ * @param {string} PG_DATABASE 
  * @param {string[]} DB_SCHEMAS 
  * @param {import('pg').Pool} pool 
  * @param {string} api_prefix 
  * @returns {Promise<import('./router.js').FRouter>}
  */
-async function createSpApiRouter(DB_SCHEMAS, pool, api_prefix) {
+async function createSpApiRouter(PG_DATABASE, DB_SCHEMAS, pool, api_prefix) {
    const db_tables = await func.spFindDbTables(DB_SCHEMAS, pool)
-   const controllers = createApiControllers(db_tables, pool)
+   const controllers = createApiControllers(PG_DATABASE, db_tables, pool)
    /** @type {Record<string, import('app/sp-controller').FTableApi<any>>} */
    const handlers = {}
    for (let schema in db_tables) {

@@ -21,7 +21,7 @@ pool.query("SELECT 1+1").then(async () => {
    const public_root = path.resolve('./public')
    const staticHandler = createStaticHandler(public_root, logger)
    const indexHtmlHandler = createIndexHtmlHandler(public_root, config.SP_NAME)
-   const apiRouter = await createSpApiRouter(config.DB_SCHEMAS, pool, '/api/' + config.SP_NAME)
+   const apiRouter = await createSpApiRouter(config.DB_SETTINGS.database, config.DB_SCHEMAS, pool, '/api/' + config.SP_NAME)
    
    logger.log({apiRouter});
 
