@@ -2,7 +2,7 @@
 
 const vm = require('node:vm');
 
-const RUN_OPTIONS = { timeout: 5000, displayErrors: false };
+const RUN_OPTIONS = { timeout: 5000, displayErrors: true };
 
 /** 
  * @param {string} codeSrc 

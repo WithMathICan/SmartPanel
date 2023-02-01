@@ -2,6 +2,7 @@ import { Col } from 'classes/Col'
 import { DbRecord } from './crud'
 import {PoolClient, Pool} from 'pg'
 
+
 export interface ISpModel {
    cols() : Promise<Col[]>
    bean(id: string, fields = ['*']): Promise<DbRecord | null>

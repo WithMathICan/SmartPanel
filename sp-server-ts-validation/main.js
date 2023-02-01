@@ -9,7 +9,7 @@ const { config } = require('./config.js');
 const { createStaticHandler, createIndexHtmlHandler } = require('./sp-routes/sp-static.js');
 const { logger } = require('./app/sp-logger.js');
 const func = require('./app/sp-functions');
-const { createApiControllers } = require('./sp-routes/sp-api.js');
+const { createSpApiRouter } = require('./sp-routes/sp-api.js');
 
 process.on('uncaughtException', err => {
    logger.log(err);
@@ -18,13 +18,12 @@ process.on('uncaughtException', err => {
 const pool = new Pool(config.DB_SETTINGS);
 
 pool.query("SELECT 1+1").then(async () => {
-   let public_root = path.resolve('./public')
-   let staticHandler = createStaticHandler(public_root, logger)
-   let indexHtmlHandler = createIndexHtmlHandler(public_root, config.SP_NAME)
-   let db_tables = await func.spFindDbTables(config.DB_SCHEMAS, pool)
-   let controllers = createApiControllers(db_tables, pool)
-
-   logger.log({controllers});
+   const public_root = path.resolve('./public')
+   const staticHandler = createStaticHandler(public_root, logger)
+   const indexHtmlHandler = createIndexHtmlHandler(public_root, config.SP_NAME)
+   const apiRouter = await createSpApiRouter(config.DB_SCHEMAS, pool, '/api/' + config.SP_NAME)
+   
+   logger.log({apiRouter});
 
    http.createServer(async (req, res) => {
       let url = req.url || '/'
@@ -38,10 +37,10 @@ pool.query("SELECT 1+1").then(async () => {
          resData = await staticHandler(url)
          if (!resData) resData = await indexHtmlHandler(url)
       }
-      // if (!resData) {
-      //    let handler = await spModelRouter(method, url)
-      //    if (handler) resData = await handler({...args})
-      // }
+      if (!resData) {
+         let handler = apiRouter(method, url)
+         if (handler) resData = await handler({...args})
+      }
 
       let resIsJson = req.headers['accept'] === 'application/json'
       // logger.log({resIsJson});
@@ -56,7 +55,7 @@ pool.query("SELECT 1+1").then(async () => {
          else res.end('404, Not Found');
       }
    }).listen(config.PORT)
-   logger.log("Server started on port ", config.PORT);
+   logger.log("Server started on port", config.PORT);
 }).catch(e =>{
    logger.error(e)
 })

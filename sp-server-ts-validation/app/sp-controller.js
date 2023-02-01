@@ -20,13 +20,13 @@ createSpController: (schema, table, pool) => {
          else return {statusCode: 200, message: 'OK', result}
       },
 
-      async bean(id, fields = ['*']){
+      async bean({id, fields = ['*']}){
          let result = await model.bean(id, fields)
          if (result) return {statusCode: 200, message: 'OK', result}
          else return {statusCode: 404, message: 'Bean not found', result}
       },
 
-      async beans(fields = ['*']){
+      async beans({fields = ['*']}){
          let result = await model.beans(fields)
          return {statusCode: 200, message: 'OK', result}
       },
@@ -43,7 +43,7 @@ createSpController: (schema, table, pool) => {
          else return {statusCode: 400, message: 'Can not update record', result}
       },
 
-      async removeMany(ids){
+      async removeMany({ids}){
          let result = await model.removeMany(ids)
          if (ids.length > 0) return {statusCode: 200, message: 'OK', result}
          else return {statusCode: 404, message: "Can not delete records", result}
