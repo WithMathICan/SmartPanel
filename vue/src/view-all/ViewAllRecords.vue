@@ -6,21 +6,28 @@
          <router-link class="link p-button p-button-warning" :to="{ name: 'new', params: { schema, table } }">Создать</router-link>
          <ButtonDelete :schema="schema" :table="table" :ids="ids" label="Удалить" :delete-cb="clearSelected" />
       </div>
-      <DataTable responsiveLayout="scroll" :value="spBeans[tableKey]" dataKey="id" :rowHover="true" v-model:selection="selectedBeans">
+      <DataTable responsiveLayout="scroll" :value="spBeans[tableKey]" dataKey="id" :rowHover="true" 
+         v-model:filters="filters" filterDisplay="menu" v-model:selection="selectedBeans">
          <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-         <Column field="id" header="ID">
+         <Column field="id" header="ID" :sortable="true">
             <template #body="slotProps">
                <router-link class="link p-button p-button-info" :to="linkToEdit(slotProps.data)">
                   {{ slotProps.data.id }}
                </router-link>
             </template>
+            <template #filter="{filterModel}">
+               <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search by name"/>
+            </template>
          </Column>
-         <Column v-for="col of spColsData[tableKey]" :field="col.column_name" :header="col.column_name">
+         <Column v-for="col of spColsData[tableKey]" :field="col.column_name" :header="col.column_name" :sortable="true">
             <template #body="slotProps">
                <ColFk v-if="col.data_type === 'fk'" :col="col" :bean="slotProps.data" />
                <ColDate v-else-if="col.data_type === 'date'" :bean="slotProps.data" :col="col" />
                <ColNumber v-else-if="col.data_type === 'number'" :bean="slotProps.data" :col="col" />
                <ColString v-else-if="col.data_type === 'varchar'" :data="slotProps.data[col.column_name].substring(0, 150)" />
+            </template>
+            <template #filter="{filterModel}">
+               <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search"/>
             </template>
          </Column>
          <Column header="Actions">
@@ -38,6 +45,7 @@
 </template>
 
 <script setup>
+import InputText from 'primevue/inputtext';
 import { onMounted, watch, ref } from 'vue'
 import { FillBeans, FillColsData, spTableKey, spBeans, spColsData } from '../store';
 import DataTable from 'primevue/datatable';
@@ -49,6 +57,7 @@ import ColNumber from './cols/ColNumber.vue'
 import ButtonDelete from '../edit/components/ButtonDelete.vue';
 import { computed } from 'vue';
 import ButtonModalEdit from '../edit/components/ButtonModalEdit.vue';
+import { FilterMatchMode, FilterOperator } from "primevue/api";
 
 const props = defineProps({ schema: String, table: String })
 
@@ -73,11 +82,25 @@ function linkToEdit(bean) {
    return { name: 'edit', params: { schema: props.schema, table: props.table, id: bean.id } }
 }
 
+const filters = ref({
+   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+   id: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+   },
+   title: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+   },
+})
+
 </script>
 
 <style lang="scss">
 .link {
    text-decoration: none;
    font-weight: 900;
+   // padding: 6px;
+   display: inline-block;
 }
 </style>
