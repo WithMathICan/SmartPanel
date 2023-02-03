@@ -5,6 +5,12 @@ import { loading } from "./store";
 /** @type {import("./api").TSpApi} */
 export const api = {}
 
+/**
+ * 
+ * @param {string} url 
+ * @param {any} body 
+ * @returns 
+ */
 const post = async (url, body = '') => {
    if (typeof body === 'object') body = JSON.stringify(body)
    if (typeof body !== 'string') return console.error("typeof body !== 'string'");
@@ -21,7 +27,7 @@ const post = async (url, body = '') => {
          // console.log(result);
          return result
       }
-   } catch (e) {
+   } catch (/** @type {any} */ e) {
       // console.log(e);
       showMessage(e.message, 15000, 'error')
    } finally{
@@ -38,15 +44,14 @@ export function CreateApi(tables, API_PATH) {
    for (let schema in tables) {
       api[schema] = {}
       for (let table of tables[schema]) {
-         api[schema][table] = {}
-         api[schema][table].GetColsData = () => post(`${API_PATH}/${schema}/${table}/cols`)
-         api[schema][table].GetColsCreate = () => post(`${API_PATH}/${schema}/${table}/cols`)
-         api[schema][table].GetColsEdit = () => post(`${API_PATH}/${schema}/${table}/cols`)
-         api[schema][table].GetColsCopy = () => post(`${API_PATH}/${schema}/${table}/cols`)
-         api[schema][table].GetBeans = () => post(`${API_PATH}/${schema}/${table}/beans`)
-         api[schema][table].GetBean = (id) => post(`${API_PATH}/${schema}/${table}/bean`, { id })
-         api[schema][table].SaveBean = (bean) => post(`${API_PATH}/${schema}/${table}/save`, { bean })
-         api[schema][table].RemoveBeans = (ids) => post(`${API_PATH}/${schema}/${table}/remove`, { ids })
+         api[schema][table] = {
+            GetCols: () => post(`${API_PATH}/${schema}/${table}/cols`),
+            GetBeans: () => post(`${API_PATH}/${schema}/${table}/beans`),
+            GetBean: (id) => post(`${API_PATH}/${schema}/${table}/bean`, { id }),
+            CreateBean: (bean) => post(`${API_PATH}/${schema}/${table}/create`, { bean }),
+            UpdateBean: (bean) => post(`${API_PATH}/${schema}/${table}/update`, { bean }),
+            RemoveBeans: (ids) => post(`${API_PATH}/${schema}/${table}/remove`, { ids }),
+         }
       }
    }
 }

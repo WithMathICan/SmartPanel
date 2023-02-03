@@ -33,7 +33,7 @@ let bean = ref(null)
 let cols = ref([])
 let router = useRouter()
 function init() {
-   api[props.schema][props.table].GetColsCopy().then(data => cols.value = data ?? [])
+   api[props.schema][props.table].GetCols().then(data => cols.value = data ?? [])
    api[props.schema][props.table].GetBean(props.id).then(data => {
       if (!data) return
       delete data.id
@@ -44,7 +44,7 @@ function init() {
 onMounted(init)
 watch(() => [props.schema, props.table, props.id], init)
 function save(){
-   api[props.schema][props.table].SaveBean(bean.value).then(data => {
+   api[props.schema][props.table].CreateBean(bean.value).then(data => {
       if (!data || !data.id) return
       router.push({name: 'edit', params: {...props, id: data.id}})
       UpdateBeans(props.schema, props.table, data)

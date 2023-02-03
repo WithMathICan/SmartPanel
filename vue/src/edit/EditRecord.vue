@@ -38,14 +38,14 @@ let props = defineProps(['schema', 'table', 'id'])
 let bean = ref(null)
 let cols = ref([])
 function init() {
-   api[props.schema][props.table].GetColsEdit().then(data => cols.value = data ?? [])
+   api[props.schema][props.table].GetCols().then(data => cols.value = data ?? [])
    api[props.schema][props.table].GetBean(props.id).then(data => bean.value = data)
 }
 
 onMounted(init)
 watch(() => [props.schema, props.table, props.id], init)
 function save(){
-   api[props.schema][props.table].SaveBean(bean.value).then(data => {
+   api[props.schema][props.table].UpdateBean(bean.value).then(data => {
       UpdateBeans(props.schema, props.table, data)
    })
 }

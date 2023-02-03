@@ -100,7 +100,6 @@ const filters = ref({
 .link {
    text-decoration: none;
    font-weight: 900;
-   // padding: 6px;
    display: inline-block;
 }
 </style>

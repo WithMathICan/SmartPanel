@@ -27,7 +27,7 @@ let cols = ref([])
 let showDialog = ref(false)
 
 function openModalEdit() {
-   Promise.all([api[props.schema][props.table].GetColsEdit(), api[props.schema][props.table].GetBean(props.id)]).then(data => {
+   Promise.all([api[props.schema][props.table].GetCols(), api[props.schema][props.table].GetBean(props.id)]).then(data => {
       cols.value = data[0] ?? []
       bean.value = data[1]
       showDialog.value = true

@@ -6,6 +6,7 @@ import CreateRecord from './edit/CreateRecord.vue'
 import Main from './Main.vue'
 import NotFound from './NotFound.vue'
 
+/** @param {Record<string, string[]>} tables */
 export function CreateRoutes(tables) {
    /**@type {RouteRecordRaw[]} */
    let routes = []

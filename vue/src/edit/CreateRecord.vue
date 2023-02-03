@@ -33,10 +33,10 @@ let router = useRouter()
 let bean = ref({})
 let cols = ref([])
 function init() {
-   api[props.schema][props.table].GetColsCreate().then(ColsObtained)
+   api[props.schema][props.table].GetCols().then(ColsObtained)
 }
 
-/** @param {import('sp-common/col').Col[]} dataCols */
+/** @param {import('../../../sp-server-ts-validation/classes/Col').Col[]} dataCols */
 function ColsObtained(dataCols){
    if (!Array.isArray(dataCols)) return
    cols.value = dataCols
@@ -54,7 +54,7 @@ function ColsObtained(dataCols){
 onMounted(init)
 watch(() => [props.schema, props.table], init)
 function save(){
-   api[props.schema][props.table].SaveBean(bean.value).then(data => {
+   api[props.schema][props.table].CreateBean(bean.value).then(data => {
       if (!data || !data.id) return
       router.push({name: 'edit', params: {...props, id: data.id}})
       UpdateBeans(props.schema, props.table, data)
