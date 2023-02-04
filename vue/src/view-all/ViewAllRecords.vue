@@ -1,7 +1,5 @@
 <template>
    <h1 class="text-700 mb-2">{{ table }} </h1>
-   {{ filters }}
-   <span v-if="selectedBeans.length">{{ selectedBeans.length }} выбрано</span>
    <div v-if="tableKey && Array.isArray(spBeans[tableKey])">
       <div class="mt-2 mb-2">
          <router-link class="link p-button p-button-warning" :to="{ name: 'new', params: { schema, table } }">Создать</router-link>
@@ -15,12 +13,17 @@
          :global-filter-fields="['title', 'id']"
       >
          <template #header>
-            <div class="flex justify-content-between">
+            <div class="flex justify-content-between align-items-center">
                <Button type="button" icon="pi pi-filter-slash" label="Clear" class="p-button-outlined" @click="filters=createFilters()"/>
+               <span v-if="selectedBeans.length" class="text-blue-600">{{ selectedBeans.length }} выбрано</span>
                <span class="p-input-icon-left">
                   <i class="pi pi-search"></i>
                   <InputText v-model="filters['glob'].value" placeholder="Пошук" />
                </span>
+            </div>
+            <div style="text-align:left" v-if="Array.isArray(spColsData[tableKey])">
+               <MultiSelect :modelValue="selectedColumns" :options="spColsData[tableKey]" optionLabel="column_name" @update:modelValue="onToggle"
+                  placeholder="Select Columns" style="width: 100%" display="chip"/>
             </div>
          </template>
          <template #empty><h3 class="text-pink-500">Записей нет</h3></template>
@@ -35,7 +38,7 @@
                <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search by ID"/>
             </template>
          </Column>
-         <Column v-for="col of spColsData[tableKey]" :field="col.column_name" :header="col.column_name" :sortable="true" 
+         <Column v-for="col of selectedColumns" :field="col.column_name" :header="col.column_name" :sortable="true" 
                :data-type="findDataType(col)" :showFilterMatchModes="!col.fk">
             <template #body="slotProps">
                <ColFk v-if="col.data_type === 'fk'" :col="col" :bean="slotProps.data" />
@@ -73,7 +76,7 @@
 
 <script setup>
 import InputText from 'primevue/inputtext';
-import { onMounted, watch, ref } from 'vue'
+import { onMounted, watch, ref, computed } from 'vue'
 import { FillBeans, FillColsData, spTableKey, spBeans, spColsData } from '../store';
 import DataTable from 'primevue/datatable';
 // import {} from 'primevue/datatable';
@@ -83,7 +86,6 @@ import ColFk from './cols/ColFk.vue'
 import ColDate from './cols/ColDate.vue'
 import ColNumber from './cols/ColNumber.vue'
 import ButtonDelete from '../edit/components/ButtonDelete.vue';
-import { computed } from 'vue';
 import ButtonModalEdit from '../edit/components/ButtonModalEdit.vue';
 import { FilterMatchMode, FilterOperator } from "primevue/api";
 import Calendar from 'primevue/calendar';
@@ -97,7 +99,7 @@ const props = defineProps({
    table: {type: String, required: true },
 })
 
-let tableKey = ref('')
+let tableKey = computed(() => spTableKey(props.schema, props.table))
 let selectedBeans = ref([])
 let ids = computed(() => selectedBeans.value.map(el => el.id))
 
@@ -108,7 +110,7 @@ function clearSelected(deletedIds) {
 const filters = ref(createFilters())
 
 function createFilters(){
-   let cols = spColsData[spTableKey(props.schema, props.table)]
+   let cols = spColsData[tableKey.value]
    let filter = {
       glob: {value: null, matchMode: FilterMatchMode.CONTAINS},
       id: {
@@ -136,11 +138,34 @@ function createFilters(){
    return filter
 }
 
+/** @type {import('vue').Ref<import('../api').Col[]>} */
+let selectedColumns = ref([])
+
+let localStorageKey = computed(() => `key-view-all-${props.schema}-${props.table}`)
+
+/** @param {import('../api').Col[]} val*/
+function onToggle(val) {
+   if (!Array.isArray(val)) return
+   localStorage.setItem(localStorageKey.value, val.map(col => col.column_name).join(','))
+   if (Array.isArray(spColsData[tableKey.value])){
+      selectedColumns.value = spColsData[tableKey.value].filter(col => val.includes(col));
+   }
+};
+
+/** @param {import('../api').Col[]} cols*/
+function setInitialCols(cols){
+   let fields = localStorage.getItem(localStorageKey.value)
+   if (fields){
+      let arr_fields = fields.split(',')
+      selectedColumns.value = cols.filter(col => arr_fields.includes(col.column_name))
+   }
+   else selectedColumns.value = cols
+}
+
 function init() {
    console.log('init ViewAllRecords');
-   tableKey.value = spTableKey(props.schema, props.table)
    FillBeans(props.schema, props.table)
-   FillColsData(props.schema, props.table)
+   FillColsData(props.schema, props.table).then(setInitialCols)
 }
 
 onMounted(init)

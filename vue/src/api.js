@@ -1,5 +1,6 @@
 import { ClearMessages, showMessage } from "./messages";
 import { loading } from "./store";
+export {Col} from '../../sp-server-ts-validation/classes/Col'
 
 
 /** @type {import("./api").TSpApi} */

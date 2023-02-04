@@ -5,7 +5,7 @@
 <script>
 import { defineComponent, onMounted, ref } from 'vue';
 import { spBeans, FillBeans,  spTableKey } from '../../store'
-import { Col } from 'sp-common'
+import { Col } from '../../api'
 import { computed } from '@vue/reactivity';
 
 export default defineComponent({
