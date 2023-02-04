@@ -17,8 +17,8 @@
                <span v-if="selectedBeans.length" class="text-blue-600">{{ selectedBeans.length }} выбрано</span>
             </div>
             <div style="text-align:left" v-if="Array.isArray(spColsData[tableKey])">
-               <MultiSelect :modelValue="selectedColumns" :options="spColsData[tableKey]" optionLabel="column_name" @update:modelValue="onToggle"
-                  placeholder="Select Columns" style="width: 100%" display="chip"/>
+               <MultiSelect :modelValue="selectedColumns" :options="spColsData[tableKey].sort(sortCols)" optionLabel="column_name" 
+                  placeholder="Select Columns" style="width: 100%" display="chip" @update:modelValue="onToggle"/>
             </div>
          </template>
          <template #empty><h3 class="text-pink-500">Записей нет</h3></template>
@@ -87,7 +87,17 @@ import Calendar from 'primevue/calendar';
 import InputNumber from 'primevue/inputnumber';
 import MultiSelect from 'primevue/multiselect';  
 import Button from 'primevue/button';
-// import Row from 'primevue/row';        
+// import Row from 'primevue/row';  
+
+/**
+* @param {import('../api').Col} col1
+* @param {import('../api').Col} col2
+*/
+function sortCols(col1, col2){
+   if (col1.column_name < col2.column_name) return -1
+   if (col1.column_name > col2.column_name) return 1
+   return 0
+}
 
 const props = defineProps({ 
    schema: {type: String, required: true}, 
