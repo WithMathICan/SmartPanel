@@ -1,5 +1,5 @@
 <template>
-   <label :for="col.column_name">{{col.column_name}}<span class="text-red" v-if="!col.is_nullable">*</span></label>
+   <label :for="col.column_name">{{col.column_name}}<span class="text-red-500" v-if="!col.is_nullable">*</span></label>
    <Dropdown class="w-full" v-model="bean[col.column_name]" :required="!col.is_nullable"
       :options="showOptions" :optionLabel="fk.foreign_title_column_name" 
       :optionValue="fk.foreign_column_name" :filter="(showOptions.length>8)" />

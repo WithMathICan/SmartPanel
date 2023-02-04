@@ -59,7 +59,7 @@ async function spCreateCols(schema, table, database, pg_client) {
       let col = cols.find(el => el.column_name === fk.column_name)
       if (col) {
          col.data_type = 'fk'
-         col.fk = new Fk(fk, 'name')
+         col.fk = new Fk(fk, 'title')
       }
    }
 

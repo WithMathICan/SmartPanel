@@ -1,3 +1,5 @@
+import { Fk } from "./Fk";
+
 export type TColType = 'number' | 'varchar' | 'date' | 'fk' | 'm2m' | 'id';
 
 export interface IDbCol{

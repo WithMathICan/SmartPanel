@@ -24,14 +24,15 @@ export const loading = ref(false)
  * @param {*} spCols 
  * @param {*} getMethod 
  * @param {boolean} refresh 
- * @returns 
+ * @returns {Promise<import('./api').Col[]>}
  */
 async function FillCols(schema, table, spCols, getMethod, refresh){
    let key = spTableKey(schema, table)
-   if (spCols[key] && !refresh) return;
-   if (spCols[key] === 'loading') return;
+   if (spCols[key] && !refresh) return spCols[key];
+   if (spCols[key] === 'loading') return [];
    spCols[key] = 'loading'
    spCols[key] = await getMethod()
+   return spCols[key]
 }
 
 /**

@@ -1,12 +1,11 @@
 
 
 import {Col} from '../../sp-server-ts-validation/classes/Col'
+export {Col}
 
 export type DbRecord = {
    [x: string]: any
 }
-
-export {Col}
 
 export interface ISpApi {
    GetCols() : Promise<Col[]>
