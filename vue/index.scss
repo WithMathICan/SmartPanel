@@ -8,3 +8,12 @@ body, .p-component{
 }
 @import 'primeflex/primeflex.scss';
 
+// .p-multiselect-label{
+//    text-overflow: unset!important;
+// }
+
+.p-multiselect-label {
+	white-space: break-spaces!important;
+	overflow: auto!important;
+}
+

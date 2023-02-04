@@ -10,16 +10,11 @@
          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" 
          :rowsPerPageOptions="[2, 5,10,25,50,100]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
          stateStorage="session" :stateKey="`dt-state-session-${schema}-${table}`"
-         :global-filter-fields="['title', 'id']"
       >
          <template #header>
             <div class="flex justify-content-between align-items-center">
                <Button type="button" icon="pi pi-filter-slash" label="Clear" class="p-button-outlined" @click="filters=createFilters()"/>
                <span v-if="selectedBeans.length" class="text-blue-600">{{ selectedBeans.length }} выбрано</span>
-               <span class="p-input-icon-left">
-                  <i class="pi pi-search"></i>
-                  <InputText v-model="filters['glob'].value" placeholder="Пошук" />
-               </span>
             </div>
             <div style="text-align:left" v-if="Array.isArray(spColsData[tableKey])">
                <MultiSelect :modelValue="selectedColumns" :options="spColsData[tableKey]" optionLabel="column_name" @update:modelValue="onToggle"
@@ -112,7 +107,7 @@ const filters = ref(createFilters())
 function createFilters(){
    let cols = spColsData[tableKey.value]
    let filter = {
-      glob: {value: null, matchMode: FilterMatchMode.CONTAINS},
+      // glob: {value: null, matchMode: FilterMatchMode.CONTAINS},
       id: {
          operator: FilterOperator.AND,
          constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS}],
