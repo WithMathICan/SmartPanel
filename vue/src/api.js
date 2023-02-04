@@ -48,9 +48,11 @@ export function CreateApi(tables, API_PATH) {
             GetCols: () => post(`${API_PATH}/${schema}/${table}/cols`),
             GetBeans: () => post(`${API_PATH}/${schema}/${table}/beans`),
             GetBean: (id) => post(`${API_PATH}/${schema}/${table}/bean`, { id }),
-            CreateBean: (bean) => post(`${API_PATH}/${schema}/${table}/create`, { bean }),
-            UpdateBean: (bean) => post(`${API_PATH}/${schema}/${table}/update`, { bean }),
-            RemoveBeans: (ids) => post(`${API_PATH}/${schema}/${table}/remove`, { ids }),
+            SaveBean: (bean) => {
+               if ('id' in bean) return post(`${API_PATH}/${schema}/${table}/update`, bean)
+               else return post(`${API_PATH}/${schema}/${table}/create`, bean)
+            },
+            RemoveBeans: (ids) => post(`${API_PATH}/${schema}/${table}/remove-many`, { ids }),
          }
       }
    }

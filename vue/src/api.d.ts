@@ -12,8 +12,7 @@ export interface ISpApi {
    GetCols() : Promise<Col[]>
    GetBean(id: string, fields = ['*']): Promise<DbRecord | null>
    GetBeans(fields = ['*']): Promise<DbRecord[]>
-   CreateBean(record: DbRecord): Promise<DbRecord | null>
-   UpdateBean(record: DbRecord): Promise<DbRecord | null>
+   SaveBean(record: DbRecord): Promise<DbRecord | null>
    RemoveBeans(ids: string[]): Promise<string[]>
 }
 

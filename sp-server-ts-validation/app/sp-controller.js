@@ -32,6 +32,7 @@ createSpController: (schema, table, pool) => {
       },
 
       async create(record){
+         console.log(record);
          let result = await model.create(record)
          if (result) return {statusCode: 201, message: 'OK', result}
          else return {statusCode: 400, message: 'Can not create new record', result}

@@ -45,7 +45,7 @@ function init() {
 onMounted(init)
 watch(() => [props.schema, props.table, props.id], init)
 function save(){
-   api[props.schema][props.table].UpdateBean(bean.value).then(data => {
+   api[props.schema][props.table].SaveBean(bean.value).then(data => {
       UpdateBeans(props.schema, props.table, data)
    })
 }

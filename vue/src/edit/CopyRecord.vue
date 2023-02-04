@@ -44,7 +44,7 @@ function init() {
 onMounted(init)
 watch(() => [props.schema, props.table, props.id], init)
 function save(){
-   api[props.schema][props.table].CreateBean(bean.value).then(data => {
+   api[props.schema][props.table].SaveBean(bean.value).then(data => {
       if (!data || !data.id) return
       router.push({name: 'edit', params: {...props, id: data.id}})
       UpdateBeans(props.schema, props.table, data)
