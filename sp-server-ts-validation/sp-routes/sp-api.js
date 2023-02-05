@@ -7,6 +7,7 @@ const load = require('../app/load.js')
 const modelSrc = fs.readFileSync('app/sp-model.js', { encoding: 'utf8' })
 const controllerSrc = fs.readFileSync('app/sp-controller.js', { encoding: 'utf-8' })
 const { logger } = require('../app/sp-logger.js')
+const path = require('node:path')
 let console = logger
 
 const HEADERS = {
@@ -42,11 +43,18 @@ function createApiModels(PG_DATABASE, db_tables) {
    /** @type {Record<string, import("app/sp-model").FSpModel>} */
    let models = {}
    let createSpModel = readSpModel(PG_DATABASE)
-   let sandbox = Object.freeze({ createSpModel, console: logger, sp: { func } })
+   let sandbox = Object.freeze({ console: logger, sp: { func, createSpModel } })
    for (let schema in db_tables) {
       for (let table of db_tables[schema]) {
          let key = `${schema}.${table}`
-         models[key] = load(`createSpModel('${schema}', '${table}');`, sandbox)
+         let src = `sp.createSpModel('${schema}', '${table}');`
+         let fileSrc = path.resolve(`sp-models/${schema}/${table}.js`)
+         if (fs.existsSync(fileSrc)){
+            src = fs.readFileSync(fileSrc, {encoding: 'utf-8'})
+         }
+         let res = load(src, sandbox)
+         console.log({schema, table, res});
+         models[key] = load(src, sandbox)
       }
    }
    return models
