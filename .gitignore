@@ -3,7 +3,6 @@
 /sp-server/node_modules
 /sp-server-with-load/node_modules
 /sp-server-ts-validation/node_modules
-config.js
 package-lock.json
 /vue/out
 sp-tmp/
