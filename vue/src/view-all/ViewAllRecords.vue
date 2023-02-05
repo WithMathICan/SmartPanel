@@ -17,7 +17,7 @@
                <span v-if="selectedBeans.length" class="text-blue-600">{{ selectedBeans.length }} выбрано</span>
             </div>
             <div style="text-align:left" v-if="Array.isArray(spColsData[tableKey])">
-               <MultiSelect :modelValue="selectedColumns" :options="spColsData[tableKey].sort(sortCols)" optionLabel="column_name" 
+               <MultiSelect :modelValue="selectedColumns" :options="[...spColsData[tableKey]].sort(sortCols)" optionLabel="column_name" 
                   placeholder="Select Columns" style="width: 100%" display="chip" @update:modelValue="onToggle"/>
             </div>
          </template>
