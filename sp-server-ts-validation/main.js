@@ -8,8 +8,8 @@ const path = require('node:path');
 const { config } = require('./config.js');
 const { createStaticHandler, createIndexHtmlHandler } = require('./sp-routes/sp-static.js');
 const { logger } = require('./app/sp-logger.js');
-const func = require('./app/sp-functions');
 const { createSpApiRouter } = require('./sp-routes/sp-api.js');
+const {createInterfaces} = require('./app/create-interfaces.js')
 
 process.on('uncaughtException', err => {
    logger.log(err);
@@ -22,7 +22,8 @@ pool.query("SELECT 1+1").then(async () => {
    const staticHandler = createStaticHandler(public_root, logger)
    const indexHtmlHandler = createIndexHtmlHandler(public_root, config.SP_NAME)
    const apiRouter = await createSpApiRouter(config.DB_SETTINGS.database, config.DB_SCHEMAS, pool, '/api/' + config.SP_NAME)
-   
+   createInterfaces(config.DB_SCHEMAS, config.DB_SETTINGS.database, pool)
+
    logger.log({apiRouter});
 
    http.createServer(async (req, res) => {
@@ -43,7 +44,6 @@ pool.query("SELECT 1+1").then(async () => {
       }
 
       let resIsJson = req.headers['accept'] === 'application/json'
-      // logger.log({resIsJson});
       if (resData){
          res.writeHead(resData.statusCode, resData.headers)
          if (resIsJson) res.end(JSON.stringify(resData.data))
