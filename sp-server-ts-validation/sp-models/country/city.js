@@ -7,13 +7,13 @@
    }
 
    /**
-    * @type {import("../../app/sp-model").FSpModel}
+    * @type {import("../sp-model").FSpModel}
     * @param {import('pg').PoolClient} pgClient
     */
    function model(pgClient) {
       const baseModel = sp.createSpModel('country', 'city')(pgClient);
 
-      /** @type {import("../../app/sp-model").ISpModel} */
+      /** @type {import("../sp-model").ISpModel} */
       const modelObj = {
          ...baseModel,
          /** @param {import("sp-interfaces/country/city").Icountry_city} record */

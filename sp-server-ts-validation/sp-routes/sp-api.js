@@ -4,8 +4,8 @@ const fs = require('node:fs');
 const { createCRUD } = require('../app/crud.js')
 const func = require('../app/sp-functions.js')
 const load = require('../app/load.js')
-const modelSrc = fs.readFileSync('app/sp-model.js', { encoding: 'utf8' })
-const controllerSrc = fs.readFileSync('app/sp-controller.js', { encoding: 'utf-8' })
+const modelSrc = fs.readFileSync('sp-models/sp-model.js', { encoding: 'utf8' })
+const controllerSrc = fs.readFileSync('sp-models/sp-controller.js', { encoding: 'utf-8' })
 const { logger } = require('../app/sp-logger.js');
 const path = require('node:path');
 const console = logger
@@ -27,7 +27,7 @@ function readSpModel(PG_DATABASE) {
    return createSpModel
 }
 
-/** @param {Record<string, import("app/sp-model").FSpModel>} models*/
+/** @param {Record<string, import("sp-models/sp-model").FSpModel>} models*/
 function readSpController(models) {
    const sandbox = Object.freeze({ console: logger, sp: { func, models } })
    const { createSpController } = load(controllerSrc, sandbox)
@@ -37,10 +37,10 @@ function readSpController(models) {
 /**
  * @param {string} PG_DATABASE
  * @param {Record<string, string[]>} dbTables
- * @returns {Record<string, import("app/sp-model").FSpModel>}
+ * @returns {Record<string, import("sp-models/sp-model").FSpModel>}
  */
 function createApiModels(PG_DATABASE, dbTables) {
-   /** @type {Record<string, import("app/sp-model").FSpModel>} */
+   /** @type {Record<string, import("sp-models/sp-model").FSpModel>} */
    const models = {}
    const createSpModel = readSpModel(PG_DATABASE)
    const sandbox = Object.freeze({ console: logger, sp: { func, createSpModel } })
@@ -64,10 +64,10 @@ function createApiModels(PG_DATABASE, dbTables) {
  * @param {string} PG_DATABASE
  * @param {Record<string, string[]>} dbTables
  * @param {import('pg').Pool} pool
- * @returns {Record<string, import("app/sp-controller").ITableApi>}
+ * @returns {Record<string, import("sp-models/sp-controller").ITableApi>}
  */
 function createApiControllers(PG_DATABASE, dbTables, pool) {
-   /** @type {Record<string, import("app/sp-controller").ITableApi>} */
+   /** @type {Record<string, import("sp-models/sp-controller").ITableApi>} */
    const controllers = {}
    const models = createApiModels(PG_DATABASE, dbTables)
    const createSpController = readSpController(models)
@@ -95,7 +95,7 @@ const camelToUrlCase = (str) => str.replace(/[A-Z]/g, (letter) => `-${letter.toL
 async function createSpApiRouter(PG_DATABASE, DB_SCHEMAS, pool, apiPrefix) {
    const dbTables = await func.spFindDbTables(DB_SCHEMAS, pool)
    const controllers = createApiControllers(PG_DATABASE, dbTables, pool)
-   /** @type {Record<string, import('app/sp-controller').FTableApi<any>>} */
+   /** @type {Record<string, import('sp-models/sp-controller').FTableApi<any>>} */
    const handlers = {}
    for (const schema in dbTables) {
       for (const table of dbTables[schema]) {

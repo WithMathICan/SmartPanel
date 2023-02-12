@@ -1,4 +1,4 @@
-import { FCreateSpModel, FSpModel, ISpModel } from './app/sp-model'
+import { FCreateSpModel, FSpModel, ISpModel } from './sp-models/sp-model'
 import * as spFunctions from './app/sp-functions'
 import { FCreateCRUD } from './app/crud'
 

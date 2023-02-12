@@ -1,7 +1,0 @@
-{
-  "globals": {
-    "sp": "readonly",
-    "db": "readonly",
-    "common": "readonly"
-  }
-}

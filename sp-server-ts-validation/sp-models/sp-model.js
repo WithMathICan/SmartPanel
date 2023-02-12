@@ -1,4 +1,3 @@
-/* eslint-disable strict */
 ({
    /**
     * @type {import("./sp-model").FCreateSpModel}
