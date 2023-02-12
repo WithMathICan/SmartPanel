@@ -1,75 +1,72 @@
 'use strict'
 
-
-/** 
- * @type {import("./crud").FCreateCRUD} 
- * @param {string} schema 
- * @param {string} table 
- * @param {import('pg').PoolClient} pg_client 
+/**
+ * @type {import("./crud").FCreateCRUD}
+ * @param {string} schema
+ * @param {string} table
+ * @param {import('pg').PoolClient} pgClient
  */
-const createCRUD = (schema, table, pg_client) => ({
-   table_name: `${schema}.${table}`,
+const createCRUD = (schema, table, pgClient) => ({
+   tableName: `${schema}.${table}`,
 
    query(sql, arr = []) {
-      return pg_client.query(sql, arr)
+      return pgClient.query(sql, arr)
    },
 
    async queryAll(sql, arr = []) {
-      let { rows } = await pg_client.query(sql, arr)
+      const { rows } = await pgClient.query(sql, arr)
       return rows
    },
 
    async queryFirst(sql, arr = []) {
-      let { rows } = await pg_client.query(sql, arr)
+      const { rows } = await pgClient.query(sql, arr)
       return rows[0]
    },
 
    findById(id, fields) {
-      return this.queryFirst(`select ${fields.join(',')} from ${this.table_name} where id=$1`, [id])
+      return this.queryFirst(`select ${fields.join(',')} from ${this.tableName} where id=$1`, [id])
    },
 
    read(id, fields) {
-      let sql = `SELECT ${fields.join(',')} from ${this.table_name}`
+      const sql = `SELECT ${fields.join(',')} from ${this.tableName}`
       return this.queryFirst(sql, [id])
    },
 
    create({ ...record }) {
       delete record.id
-      let fields = []
-      let nums = []
-      let args = []
+      const fields = []
+      const nums = []
+      const args = []
       let i = 1
-      for (let key in record) {
+      for (const key in record) {
          fields.push(key)
          nums.push(`$${i++}`)
          args.push(record[key])
       }
-      let sql = `INSERT INTO ${this.table_name} (${fields.join(',')}) VALUES (${nums.join(',')}) RETURNING *`
+      const sql = `INSERT INTO ${this.tableName} (${fields.join(',')}) VALUES (${nums.join(',')}) RETURNING *`
       return this.queryFirst(sql, args)
    },
 
    update(id, { ...record }) {
       delete record.id
-      let delta = []
+      const delta = []
       let i = 1
-      let args = []
-      for (let key in record) {
+      const args = []
+      for (const key in record) {
          delta.push(`${key}=$${i++}`)
          args.push(record[key])
       }
-      let sql = `UPDATE ${this.table_name} SET ${delta.join(',')} WHERE id=$${i} RETURNING *`
+      const sql = `UPDATE ${this.tableName} SET ${delta.join(',')} WHERE id=$${i} RETURNING *`
       args.push(id)
       return this.queryFirst(sql, args)
    },
 
    async removeMany(ids) {
-      let nums = ids.map((v, i) => `$${i + 1}`);
-      let sql = `DELETE FROM ${this.table_name} WHERE id in (${nums.join(',')}) returning id`
-      let { rows } = await pg_client.query(sql, ids)
+      const nums = ids.map((v, i) => `$${i + 1}`);
+      const sql = `DELETE FROM ${this.tableName} WHERE id in (${nums.join(',')}) returning id`
+      const { rows } = await pgClient.query(sql, ids)
       return rows.map(el => el.id)
    }
 })
-
-
 
 module.exports = { createCRUD }

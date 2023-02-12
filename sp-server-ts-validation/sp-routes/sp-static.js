@@ -37,13 +37,13 @@ async function findFilePath(root, url) {
       filePath += '/index.html'
       stat = await fs.promises.lstat(filePath)
    }
- 
-   assert(stat.isFile(), "File not found")
+
+   assert(stat.isFile(), 'File not found')
    return filePath
 }
 
 /**
- * @param {string} filePath 
+ * @param {string} filePath
  * @returns {string}
  */
 function findMimeType(filePath) {
@@ -52,14 +52,14 @@ function findMimeType(filePath) {
    return mimeType
 }
 
-/** 
- * @param {string} publicRoot 
+/**
+ * @param {string} publicRoot
  * @param {import('app/sp-logger').SpLogger} console
  * @returns {import('./router').FStaticHandler}
 */
 function createStaticHandler(publicRoot, console) {
    /** @type {import('./router').FStaticHandler} */
-   async function handler(url){
+   async function handler(url) {
       try {
          const filePath = await findFilePath(publicRoot, url)
          const data = await fs.promises.readFile(filePath);
@@ -69,9 +69,8 @@ function createStaticHandler(publicRoot, console) {
             data,
             statusCode: 200,
          }
-      } 
-      catch (/** @type {any} */ err) {
-         if (err && typeof err === 'object' && 'code' in err){
+      } catch (/** @type {any} */ err) {
+         if (err && typeof err === 'object' && 'code' in err) {
             if (err['code'] !== 'ENOENT') console.error(err);
          }
          return null
@@ -81,16 +80,16 @@ function createStaticHandler(publicRoot, console) {
 }
 
 /**
- * @param {string} publicRoot 
+ * @param {string} publicRoot
  * @param {string} spName
  */
 function createIndexHtmlHandler(publicRoot, spName) {
    /** @type {import('./router').FStaticHandler} */
-   async function indexHtmlHandler(url){
-      try{
+   async function indexHtmlHandler(url) {
+      try {
          if (url.startsWith('/' + spName)) {
-            let filePath = path.join(publicRoot, spName, 'index.html');
-            let data = await fs.promises.readFile(filePath)
+            const filePath = path.join(publicRoot, spName, 'index.html');
+            const data = await fs.promises.readFile(filePath)
             return {
                headers: { 'Content-Type': 'text/html; charset=UTF-8' },
                statusCode: 200,
@@ -98,9 +97,8 @@ function createIndexHtmlHandler(publicRoot, spName) {
             }
          }
          return null
-      } 
-      catch (err) {
-         if (err && typeof err === 'object' && 'code' in err){
+      } catch (err) {
+         if (err && typeof err === 'object' && 'code' in err) {
             if (err['code'] !== 'ENOENT') console.error(err);
          }
          return null
@@ -109,5 +107,5 @@ function createIndexHtmlHandler(publicRoot, spName) {
    return indexHtmlHandler
 }
 
-module.exports = {createStaticHandler, createIndexHtmlHandler}
+module.exports = { createStaticHandler, createIndexHtmlHandler }
 

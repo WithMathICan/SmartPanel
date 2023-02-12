@@ -1,8 +1,7 @@
+/* eslint-disable camelcase */
 'use strict'
 
-const { Fk } = require('./Fk')
-
-class Col{
+class Col {
    /** @type {string} */ table_catalog
    /** @type {string} */ table_schema
    /** @type {string} */ table_name
@@ -12,10 +11,10 @@ class Col{
    /** @type {number} */ ordinal_position
    /** @type {any} */ column_default
    /** @type {import('sp-common').TColType} */ data_type
-   /** @type {Fk | undefined} */ fk
+   /** @type {import('./Fk').Fk | undefined} */ fk
 
    /** @param {import('./Col').IDbCol} col_data */
-   constructor(col_data){
+   constructor(col_data) {
       this.table_catalog = col_data.table_catalog
       this.table_schema = col_data.table_schema
       this.table_name = col_data.table_name
@@ -32,14 +31,14 @@ class Col{
  * @param {import('./Col').IDbCol} col
  * @returns {import('./Col').TColType}
  */
-function defineDataType(col){
+function defineDataType(col) {
    if (col.column_name === 'id') return 'id'
    if (col.data_type.includes('timestamp')) return 'date'
    if (col.udt_name.includes('int') || col.udt_name.includes('float') || col.udt_name.includes('numeric') ||
-         col.data_type.includes('real') || col.data_type.includes('numeric')){
+         col.data_type.includes('real') || col.data_type.includes('numeric')) {
       return 'number'
    }
    return 'varchar'
 }
 
-module.exports = {Col}
+module.exports = { Col }

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 'use strict'
 
 class Fk {
@@ -7,7 +8,7 @@ class Fk {
    foreign_title_column_name = '';
 
    /** @param {import("./Fk").IFk} data */
-   constructor(data, title_column = 'title'){
+   constructor(data, title_column = 'title') {
       this.foreign_table_schema = data.foreign_table_schema
       this.foreign_table_name = data.foreign_table_name
       this.foreign_column_name = data.foreign_column_name
@@ -15,4 +16,4 @@ class Fk {
    }
 }
 
-module.exports = {Fk}
+module.exports = { Fk }

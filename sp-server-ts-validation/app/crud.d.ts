@@ -5,7 +5,7 @@ export type DbRecord = {
 }
 
 export interface ICrud {
-   table_name: string
+   tableName: string
    query(sql: string, arr: any[]): Promise<import('pg').QueryResult>
    queryFirst(sql: string, arr: any[] = []): Promise<DbRecord | null>
    queryAll(sql: string, arr: any[] = []): Promise<DbRecord[]>

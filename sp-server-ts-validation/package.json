@@ -8,6 +8,7 @@
     "test": "npm run lint && tsc",
     "tsc": "tsc",
     "lint": "eslint . && prettier -c \"**/*.js\" \"**/*.ts\"",
+    "lint-fix": "eslint --fix . ",
     "fmt": "prettier --write \"**/*.js\" \"**/*.ts\""
   },
   "keywords": [],
